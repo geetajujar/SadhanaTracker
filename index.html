@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sadhana Tracker</title>
+<style>
+:root{--bg:#fdf0e2;--card:#fffaf4;--ink:#2e2118;--mute:#85705f;--line:#f0dac2;--main:#cc5008;--gold:#f5a21c;--goldsoft:#ffe6c2;--done:#4eac60;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#20150d;--card:#2d1e14;--ink:#fbeee0;--mute:#c0a791;--line:#4a3424;--main:#ff9a4d;--gold:#ffb53d;--goldsoft:#4a3118;--done:#6fc582}}
+:root[data-theme="dark"]{--bg:#20150d;--card:#2d1e14;--ink:#fbeee0;--mute:#c0a791;--line:#4a3424;--main:#ff9a4d;--gold:#ffb53d;--goldsoft:#4a3118;--done:#6fc582}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Mukta","Segoe UI",system-ui,sans-serif;font-size:17px;line-height:1.45}
+h1,h2{font-family:"Fraunces",Georgia,serif;font-weight:600;margin:0}
+.wrap{max-width:520px;margin:0 auto;padding:20px 16px 40px}
+header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px}
+h1{font-size:30px;color:var(--main)}
+.date{color:var(--mute);font-size:15px}
+.week{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px}
+.day{border:1.5px solid var(--line);background:var(--card);border-radius:14px;padding:8px 0 6px;text-align:center;cursor:pointer;color:var(--ink);font:inherit;font-size:13px}
+.day b{display:block;font-size:17px}
+.day .dots{display:flex;justify-content:center;gap:2px;margin-top:4px;height:6px}
+.dots i{width:4px;height:4px;border-radius:50%;background:var(--line)}
+.dots i.on{background:var(--done)}
+.day.sel{border-color:var(--main);background:var(--main);color:var(--bg)}
+.day.sel .dots i{background:rgba(255,255,255,.35)}.day.sel .dots i.on{background:var(--bg)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
+.card h2{font-size:20px;margin-bottom:4px}
+.sub{color:var(--mute);font-size:15px;margin-bottom:12px}
+.item{display:flex;align-items:center;gap:14px;width:100%;padding:14px 12px;margin-top:8px;border:1.5px solid var(--line);border-radius:14px;background:transparent;color:var(--ink);font:inherit;font-size:18px;text-align:left;cursor:pointer}
+.item .box{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--mute);display:grid;place-items:center;color:transparent;font-size:18px}
+.item.on{background:var(--goldsoft);border-color:var(--gold)}
+.item.on .box{background:var(--done);border-color:var(--done);color:#fff}
+.item.on span:last-child{text-decoration:line-through;text-decoration-color:var(--mute)}
+button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+.item.subitem{margin-left:28px;width:calc(100% - 28px);font-size:16px;padding:10px 12px;margin-top:6px}
+.item.subitem .box{width:24px;height:24px;font-size:14px}
+.grp{margin-top:16px;font-weight:600;font-size:16px;color:var(--mute)}
+.ic{flex:none;width:28px;text-align:center;font-size:22px;line-height:1}
+.item.subitem .ic{font-size:19px}
+.item:disabled{cursor:default;color:var(--ink);opacity:1}
+.lk{background:none;border:none;color:var(--main);font:inherit;font-size:15px;font-weight:600;text-decoration:underline;cursor:pointer;padding:0;margin:-4px 0 8px}
+.mhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.nav{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font-size:22px;cursor:pointer}
+.nav:disabled{opacity:.3;cursor:default}
+.cal{display:grid;grid-template-columns:repeat(7,1fr);gap:5px}
+.wd{text-align:center;color:var(--mute);font-size:13px}
+.cd{aspect-ratio:1;border:1.5px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font:inherit;font-size:15px;line-height:1.1;padding:2px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer}
+.cd small{font-size:11px;color:var(--mute)}
+.cd.full{background:var(--done);border-color:var(--done);color:#fff}
+.cd.full small{color:#fff}
+.cd.today{border-color:var(--main);border-width:2.5px}
+.cd.sel{outline:3px solid var(--gold);outline-offset:1px}
+.cd:disabled{opacity:.3;cursor:default}
+.msum{margin-top:12px;color:var(--mute);font-size:15px}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.btn{flex:1;padding:12px;border-radius:12px;border:1.5px solid var(--main);background:transparent;color:var(--main);font:inherit;font-size:16px;font-weight:600;cursor:pointer}
+textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:13px/1.3 monospace;padding:10px}
+.msg{margin-top:12px;font-weight:600;color:var(--done);min-height:1.4em}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.stat{text-align:center;background:var(--bg);border-radius:14px;padding:12px 4px}
+.stat b{display:block;font-family:"Fraunces",Georgia,serif;font-size:28px;color:var(--main)}
+.stat small{color:var(--mute);font-size:13px;line-height:1.2;display:block}
+.row{margin-top:12px}
+.row .top{display:flex;justify-content:space-between;font-size:16px;margin-bottom:5px}
+.bar{height:10px;background:var(--line);border-radius:6px;overflow:hidden}
+.bar div{height:100%;background:var(--gold);border-radius:6px;transition:width .3s}
+.ring{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+.ring svg{flex:none}
+.ring p{margin:0;color:var(--mute);font-size:15px}
+.ring p b{color:var(--ink);font-size:18px;display:block}
+.reset{background:none;border:none;color:var(--mute);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;display:block;margin:8px auto 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div><h1>Sadhana</h1><div class="date" id="dateLabel"></div></div></header>
+<div class="week" id="week"></div>
+
+<section class="card">
+<h2 id="dayTitle">Today</h2>
+<div class="sub">Tap a practice when you finish it. Ticked ones are locked.</div>
+<button class="lk" id="lk"></button>
+<div id="list"></div>
+<div class="msg" id="msg"></div>
+</section>
+
+<section class="card">
+<div class="mhead"><button class="nav" id="pv" aria-label="Previous month">‹</button><h2 id="monTitle"></h2><button class="nav" id="nx" aria-label="Next month">›</button></div>
+<div class="sub">Tap any day to see or edit it. Green means all done.</div>
+<div class="cal" id="cal"></div>
+<div class="msum" id="msum"></div>
+</section>
+
+<section class="card">
+<h2>Your progress</h2>
+<div class="sub">Based on the last 30 days.</div>
+<div class="ring">
+<svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true"><circle cx="48" cy="48" r="40" fill="none" stroke="var(--line)" stroke-width="10"/><circle id="arc" cx="48" cy="48" r="40" fill="none" stroke="var(--gold)" stroke-width="10" stroke-linecap="round" stroke-dasharray="251.3" stroke-dashoffset="251.3" transform="rotate(-90 48 48)"/><text id="pct" x="48" y="55" text-anchor="middle" font-size="21" font-weight="700" fill="var(--ink)">0%</text></svg>
+<p><b>Overall</b>of all practices done in the last 30 days</p>
+</div>
+<div class="stats">
+<div class="stat"><b id="streak">0</b><small>day streak<br>(all done)</small></div>
+<div class="stat"><b id="full">0</b><small>full days<br>in total</small></div>
+<div class="stat"><b id="wk">0</b><small>practices<br>this week</small></div>
+</div>
+<div id="bars"></div>
+</section>
+<section class="card">
+<h2>Backup</h2>
+<div class="sub">Keep a copy so you never lose your history. Copy it, save it in Notes or WhatsApp, and paste it back here to restore.</div>
+<div class="btns"><button class="btn" id="bk">Show my backup</button><button class="btn" id="rs">Restore from text</button></div>
+<textarea id="bt" rows="4" hidden spellcheck="false"></textarea>
+<div class="msg" id="bm"></div>
+</section>
+<button class="reset" id="reset">Clear all data</button>
+</div>
+
+<script>
+const P=[{id:"guru",name:"Guru Pooja",icon:"🪔"},{id:"surya",name:"Surya Shakti",icon:"☀️",head:"Hatha Yoga",sub:1},{id:"yogasana",name:"Yogasana",icon:"🧘",sub:1},{id:"shakti",name:"Shakti Chalana Kriya",icon:"🔥"},{id:"shambhavi",name:"Shambhavi",icon:"👁️"},{id:"breath",name:"Breath Watching",icon:"🌬️"},{id:"samyama",name:"Samyama",icon:"🕉️"}];
+const KEY="sadhana-log-v1";
+let log={};
+try{log=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){log={}}
+Object.keys(log).forEach(k=>{const d=log[k];if(d&&d.hatha){d.surya=true;d.yogasana=true;delete d.hatha}});
+function save(){try{localStorage.setItem(KEY,JSON.stringify(log))}catch(e){}}
+const fmt=d=>d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+const ago=n=>{const d=new Date();d.setDate(d.getDate()-n);return d};
+const todayKey=fmt(new Date());
+let sel=todayKey;
+let unlocked=false;
+let mY=new Date().getFullYear(),mM=new Date().getMonth();
+const isDone=(k,p)=>!!(log[k]||{})[p.id];
+const count=k=>P.filter(p=>isDone(k,p)).length;
+const DN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+
+function render(){
+  document.getElementById("dateLabel").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"});
+  const wk=document.getElementById("week");wk.innerHTML="";
+  for(let i=6;i>=0;i--){
+    const d=ago(i),k=fmt(d),c=count(k);
+    const b=document.createElement("button");
+    b.className="day"+(k===sel?" sel":"");
+    b.setAttribute("aria-label",d.toDateString()+", "+c+" of "+P.length+" done");
+    b.innerHTML=DN[d.getDay()]+"<b>"+d.getDate()+"</b><span class='dots'>"+P.map((p,j)=>"<i class='"+(j<c?"on":"")+"'></i>").join("")+"</span>";
+    b.onclick=()=>{sel=k;render()};
+    wk.appendChild(b);
+  }
+  document.getElementById("dayTitle").textContent=sel===todayKey?"Today":new Date(sel+"T00:00").toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"short"});
+  const list=document.getElementById("list");list.innerHTML="";
+  const day=log[sel]||{};
+  document.getElementById("lk").textContent=unlocked?"Lock ticks again":"Unlock to edit ticks";
+  const toggle=ids=>{
+    log[sel]=log[sel]||{};
+    const all=ids.every(i=>log[sel][i]);
+    ids.forEach(i=>{if(all)delete log[sel][i];else log[sel][i]=true});
+    if(!Object.keys(log[sel]).length)delete log[sel];
+    save();render();
+  };
+  const mk=(name,on,ids,cls,ic)=>{
+    const b=document.createElement("button");
+    b.className="item"+cls+(on?" on":"");
+    b.setAttribute("aria-pressed",on);
+    b.innerHTML="<span class='box'>✓</span><span class='ic'>"+ic+"</span><span>"+name+"</span>";
+    if(on&&!unlocked)b.disabled=true;else b.onclick=()=>toggle(ids);
+    list.appendChild(b);
+  };
+  P.forEach(p=>{
+    if(p.head){const h=document.createElement("div");h.className="grp";h.textContent=p.head;list.appendChild(h)}
+    mk(p.name,!!day[p.id],[p.id],p.sub?" subitem":"",p.icon);
+  });
+  const c=count(sel);
+  document.getElementById("msg").textContent=c===P.length?"All practices done. Well done!":c>0?c+" of "+P.length+" done":"";
+  stats();cal();
+}
+
+function cal(){
+  const first=new Date(mY,mM,1),n=new Date(mY,mM+1,0).getDate(),now=new Date();
+  document.getElementById("monTitle").textContent=first.toLocaleDateString("en-IN",{month:"long",year:"numeric"});
+  document.getElementById("nx").disabled=(mY===now.getFullYear()&&mM===now.getMonth());
+  let h=DN.map(x=>"<div class='wd'>"+x[0]+"</div>").join("");
+  for(let i=0;i<first.getDay();i++)h+="<div></div>";
+  let full=0,tot=0;
+  for(let d=1;d<=n;d++){
+    const k=fmt(new Date(mY,mM,d)),c=count(k),fut=k>todayKey;
+    if(c===P.length)full++;
+    tot+=c;
+    const cls="cd"+(c===P.length?" full":"")+(k===todayKey?" today":"")+(k===sel?" sel":"");
+    const st=c>0&&c<P.length?" style='background:color-mix(in srgb,var(--gold) "+Math.round(15+c/P.length*60)+"%,transparent)'":"";
+    h+="<button class='"+cls+"'"+st+(fut?" disabled":"")+" data-k='"+k+"' aria-label='"+k+", "+c+" of "+P.length+" done'><b>"+d+"</b><small>"+(fut?"":c)+"</small></button>";
+  }
+  const g=document.getElementById("cal");g.innerHTML=h;
+  g.querySelectorAll("button").forEach(b=>b.onclick=()=>{sel=b.dataset.k;render();window.scrollTo({top:0,behavior:"smooth"})});
+  document.getElementById("msum").textContent=full+" full days and "+tot+" practices this month";
+}
+
+function stats(){
+  let done=0;const per={};P.forEach(p=>per[p.id]=0);
+  for(let i=0;i<30;i++){const k=fmt(ago(i));P.forEach(p=>{if(isDone(k,p)){done++;per[p.id]++}})}
+  const pct=Math.round(done/(P.length*30)*100);
+  document.getElementById("pct").textContent=pct+"%";
+  document.getElementById("arc").style.strokeDashoffset=251.3*(1-pct/100);
+  let s=0,i=count(todayKey)===P.length?0:1;
+  for(;;i++){if(count(fmt(ago(i)))===P.length)s++;else break}
+  document.getElementById("streak").textContent=s;
+  document.getElementById("full").textContent=Object.keys(log).filter(k=>count(k)===P.length).length;
+  let w=0;for(let j=0;j<7;j++)w+=count(fmt(ago(j)));
+  document.getElementById("wk").textContent=w;
+  document.getElementById("bars").innerHTML=P.map(p=>"<div class='row'><div class='top'><span>"+p.icon+" "+p.name+"</span><span>"+per[p.id]+"/30 days</span></div><div class='bar'><div style='width:"+Math.round(per[p.id]/30*100)+"%'></div></div></div>").join("");
+}
+
+document.getElementById("pv").onclick=()=>{mM--;if(mM<0){mM=11;mY--}cal()};
+document.getElementById("nx").onclick=()=>{mM++;if(mM>11){mM=0;mY++}cal()};
+const bt=document.getElementById("bt"),bm=document.getElementById("bm");
+document.getElementById("bk").onclick=()=>{
+  bt.value=JSON.stringify(log);bt.hidden=false;bt.select();
+  bm.textContent="Copy this text and keep it safe in Notes or WhatsApp.";
+  try{navigator.clipboard.writeText(bt.value).then(()=>{bm.textContent="Backup copied. Paste it into Notes or WhatsApp to keep it safe."},()=>{})}catch(e){}
+};
+document.getElementById("rs").onclick=()=>{
+  if(bt.hidden||!bt.value.trim()){bt.hidden=false;bt.value="";bt.focus();bm.textContent="Paste your backup text above, then tap Restore again.";return}
+  try{
+    const d=JSON.parse(bt.value);
+    if(!d||typeof d!=="object"||Array.isArray(d))throw 0;
+    if(!confirm("Replace your current records with this backup?"))return;
+    log=d;save();render();bt.hidden=true;bt.value="";bm.textContent="Backup restored.";
+  }catch(e){bm.textContent="That text isn’t a valid backup. Paste the full text and try again."}
+};
+document.getElementById("lk").onclick=()=>{unlocked=!unlocked;render()};
+document.getElementById("reset").onclick=()=>{
+  if((prompt("This erases all your records. Type DELETE to confirm.")||"").trim()==="DELETE"){log={};save();render()}
+};
+render();
+</script>
+</body>
+</html>
