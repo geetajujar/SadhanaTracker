@@ -11,9 +11,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Sadhana">
 <style>
-:root{--bg:#fdf0e2;--card:#fffaf4;--ink:#2e2118;--mute:#85705f;--line:#f0dac2;--main:#cc5008;--gold:#f5a21c;--goldsoft:#ffe6c2;--done:#4eac60;
-box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#20150d;--card:#2d1e14;--ink:#fbeee0;--mute:#c0a791;--line:#4a3424;--main:#ff9a4d;--gold:#ffb53d;--goldsoft:#4a3118;--done:#6fc582}}
+:root{--bg:#f8f6f2;--card:#ffffff;--ink:#2e2118;--mute:#85705f;--line:#e8e1d6;--main:#cc5008;--gold:#f5a21c;--goldsoft:#ffe6c2;--done:#4eac60;
+color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 :root[data-theme="dark"]{--bg:#20150d;--card:#2d1e14;--ink:#fbeee0;--mute:#c0a791;--line:#4a3424;--main:#ff9a4d;--gold:#ffb53d;--goldsoft:#4a3118;--done:#6fc582}
 *{box-sizing:border-box}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
@@ -34,17 +33,17 @@ h1{font-size:30px;color:var(--main)}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:16px}
 .card h2{font-size:20px;margin-bottom:4px}
 .sub{color:var(--mute);font-size:15px;margin-bottom:12px}
-.item{display:flex;align-items:center;gap:14px;width:100%;padding:14px 12px;margin-top:8px;border:1.5px solid var(--line);border-radius:14px;background:transparent;color:var(--ink);font:inherit;font-size:18px;text-align:left;cursor:pointer}
-.item .box{flex:none;width:30px;height:30px;border-radius:50%;border:2px solid var(--mute);display:grid;place-items:center;color:transparent;font-size:18px}
+.item{display:flex;align-items:center;gap:12px;width:100%;padding:9px 12px;margin-top:6px;border:1.5px solid var(--line);border-radius:12px;background:transparent;color:var(--ink);font:inherit;font-size:16.5px;text-align:left;cursor:pointer}
+.item .box{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--mute);display:grid;place-items:center;color:transparent;font-size:15px}
 .item.on{background:var(--goldsoft);border-color:var(--gold)}
 .item.on .box{background:var(--done);border-color:var(--done);color:#fff}
 .item.on span:last-child{text-decoration:line-through;text-decoration-color:var(--mute)}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
-.item.subitem{margin-left:28px;width:calc(100% - 28px);font-size:16px;padding:10px 12px;margin-top:6px}
-.item.subitem .box{width:24px;height:24px;font-size:14px}
+.item.subitem{margin-left:24px;width:calc(100% - 24px);font-size:15.5px;padding:7px 12px;margin-top:5px}
+.item.subitem .box{width:21px;height:21px;font-size:13px}
 .grp{margin-top:16px;font-weight:600;font-size:16px;color:var(--mute)}
-.ic{flex:none;width:28px;text-align:center;font-size:22px;line-height:1}
-.item.subitem .ic{font-size:19px}
+.ic{flex:none;width:26px;text-align:center;font-size:19px;line-height:1}
+.item.subitem .ic{font-size:17px}
 .item:disabled{cursor:default;color:var(--ink);opacity:1}
 .lk{background:none;border:none;color:var(--main);font:inherit;font-size:15px;font-weight:600;text-decoration:underline;cursor:pointer;padding:0;margin:-4px 0 8px}
 .mhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
