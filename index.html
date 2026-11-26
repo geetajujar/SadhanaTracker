@@ -77,11 +77,17 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 .ring p{margin:0;color:var(--mute);font-size:15px}
 .ring p b{color:var(--ink);font-size:18px;display:block}
 .reset{background:none;border:none;color:var(--mute);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;display:block;margin:8px auto 0}
+[hidden]{display:none!important}
+.gear{width:46px;height:46px;border-radius:14px;border:1.5px solid var(--line);background:var(--card);color:var(--main);font-size:24px;line-height:1;cursor:pointer}
+.sethead{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.sethead h2{font-size:26px;color:var(--main)}
+.btn.danger{border-color:#c0392b;color:#c0392b;width:100%;margin-top:4px}
 </style>
 </head>
 <body>
 <div class="wrap">
-<header><div><h1>Sadhana</h1><div class="date" id="dateLabel"></div></div></header>
+<div id="home">
+<header><div><h1>Sadhana</h1><div class="date" id="dateLabel"></div></div><button class="gear" id="gear" aria-label="Settings">⚙</button></header>
 <div class="week" id="week"></div>
 
 <section class="card">
@@ -90,13 +96,6 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 <button class="lk" id="lk"></button>
 <div id="list"></div>
 <div class="msg" id="msg"></div>
-</section>
-
-<section class="card">
-<div class="mhead"><button class="nav" id="pv" aria-label="Previous month">‹</button><h2 id="monTitle"></h2><button class="nav" id="nx" aria-label="Next month">›</button></div>
-<div class="sub">Tap any day to see or edit it. Green means all done.</div>
-<div class="cal" id="cal"></div>
-<div class="msum" id="msum"></div>
 </section>
 
 <section class="card">
@@ -113,6 +112,18 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 </div>
 <div id="bars"></div>
 </section>
+</div>
+
+<div id="settings" hidden>
+<div class="sethead"><button class="nav" id="back" aria-label="Back">‹</button><h2>Settings</h2></div>
+<section class="card">
+<h2>Calendar</h2>
+<div class="mhead"><button class="nav" id="pv" aria-label="Previous month">‹</button><h2 id="monTitle"></h2><button class="nav" id="nx" aria-label="Next month">›</button></div>
+<div class="sub">Tap any day to see or edit it. Green means all done.</div>
+<div class="cal" id="cal"></div>
+<div class="msum" id="msum"></div>
+</section>
+
 <section class="card">
 <h2>Backup</h2>
 <div class="sub">Keep a copy so you never lose your history. Copy it, save it in Notes or WhatsApp, and paste it back here to restore.</div>
@@ -120,11 +131,16 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 <textarea id="bt" rows="4" hidden spellcheck="false"></textarea>
 <div class="msg" id="bm"></div>
 </section>
-<button class="reset" id="reset">Clear all data</button>
+<section class="card">
+<h2>Clear all data</h2>
+<div class="sub">Erases every record on this phone. Make a backup first.</div>
+<button class="btn danger" id="reset">Clear all data</button>
+</section>
+</div>
 </div>
 
 <script>
-const P=[{id:"guru",name:"Guru Pooja",icon:"🪔"},{id:"surya",name:"Surya Shakti",icon:"☀️",head:"Hatha Yoga",sub:1},{id:"yogasana",name:"Yogasana",icon:"🧘",sub:1},{id:"shakti",name:"Shakti Chalana Kriya",icon:"🔥"},{id:"shambhavi",name:"Shambhavi",icon:"👁️"},{id:"breath",name:"Breath Watching",icon:"🌬️"},{id:"samyama",name:"Samyama",icon:"🕉️"}];
+const P=[{id:"guru",name:"Guru Pooja",icon:"🪔"},{id:"hatha",name:"Hatha Yoga",icon:"🧘",parts:[{id:"surya",name:"Surya Shakti",icon:"☀️"},{id:"yogasana",name:"Yogasana",icon:"🧘"}]},{id:"shakti",name:"Shakti Chalana Kriya",icon:"🔥"},{id:"shambhavi",name:"Shambhavi",icon:"👁️"},{id:"breath",name:"Breath Watching",icon:"🌬️"},{id:"samyama",name:"Samyama",icon:"🕉️"}];
 const KEY="sadhana-log-v1";
 let log={};
 try{log=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){log={}}
@@ -136,7 +152,7 @@ const todayKey=fmt(new Date());
 let sel=todayKey;
 let unlocked=false;
 let mY=new Date().getFullYear(),mM=new Date().getMonth();
-const isDone=(k,p)=>!!(log[k]||{})[p.id];
+const isDone=(k,p)=>{const d=log[k]||{};return p.parts?p.parts.some(x=>d[x.id]):!!d[p.id]};
 const count=k=>P.filter(p=>isDone(k,p)).length;
 const DN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
@@ -172,8 +188,10 @@ function render(){
     list.appendChild(b);
   };
   P.forEach(p=>{
-    if(p.head){const h=document.createElement("div");h.className="grp";h.textContent=p.head;list.appendChild(h)}
-    mk(p.name,!!day[p.id],[p.id],p.sub?" subitem":"",p.icon);
+    if(p.parts){
+      const h=document.createElement("div");h.className="grp";h.textContent=p.name+" (either one counts)";list.appendChild(h);
+      p.parts.forEach(x=>mk(x.name,!!day[x.id],[x.id]," subitem",x.icon));
+    }else mk(p.name,!!day[p.id],[p.id],"",p.icon);
   });
   const c=count(sel);
   document.getElementById("msg").textContent=c===P.length?"All practices done. Well done!":c>0?c+" of "+P.length+" done":"";
@@ -196,7 +214,7 @@ function cal(){
     h+="<button class='"+cls+"'"+st+(fut?" disabled":"")+" data-k='"+k+"' aria-label='"+k+", "+c+" of "+P.length+" done'><b>"+d+"</b><small>"+(fut?"":c)+"</small></button>";
   }
   const g=document.getElementById("cal");g.innerHTML=h;
-  g.querySelectorAll("button").forEach(b=>b.onclick=()=>{sel=b.dataset.k;render();window.scrollTo({top:0,behavior:"smooth"})});
+  g.querySelectorAll("button").forEach(b=>b.onclick=()=>{sel=b.dataset.k;openSet(false);render()});
   document.getElementById("msum").textContent=full+" full days and "+tot+" practices this month";
 }
 
@@ -232,6 +250,10 @@ document.getElementById("rs").onclick=()=>{
     log=d;save();render();bt.hidden=true;bt.value="";bm.textContent="Backup restored.";
   }catch(e){bm.textContent="That text isn’t a valid backup. Paste the full text and try again."}
 };
+const home=document.getElementById("home"),setv=document.getElementById("settings");
+function openSet(o){home.hidden=o;setv.hidden=!o;if(o)cal();window.scrollTo(0,0)}
+document.getElementById("gear").onclick=()=>openSet(true);
+document.getElementById("back").onclick=()=>openSet(false);
 document.getElementById("lk").onclick=()=>{unlocked=!unlocked;render()};
 document.getElementById("reset").onclick=()=>{
   if((prompt("This erases all your records. Type DELETE to confirm.")||"").trim()==="DELETE"){log={};save();render()}
