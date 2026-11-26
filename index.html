@@ -35,17 +35,19 @@ h1{font-size:30px;color:var(--main)}
 .sub{color:var(--mute);font-size:15px;margin-bottom:12px}
 .item{display:flex;align-items:center;gap:12px;width:100%;padding:9px 12px;margin-top:6px;border:1.5px solid var(--line);border-radius:12px;background:transparent;color:var(--ink);font:inherit;font-size:16.5px;text-align:left;cursor:pointer}
 .item .box{flex:none;width:24px;height:24px;border-radius:50%;border:2px solid var(--mute);display:grid;place-items:center;color:transparent;font-size:15px}
-.item.on{background:var(--goldsoft);border-color:var(--gold)}
+.item.on{background:#efece7;border-color:#e6e1d8;color:#aaa298}
+.item.on .ic{opacity:.35}
 .item.on .box{background:var(--done);border-color:var(--done);color:#fff}
-.item.on span:last-child{text-decoration:line-through;text-decoration-color:var(--mute)}
 button:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
 .item.subitem{margin-left:24px;width:calc(100% - 24px);font-size:15.5px;padding:7px 12px;margin-top:5px}
 .item.subitem .box{width:21px;height:21px;font-size:13px}
 .grp{margin-top:16px;font-weight:600;font-size:16px;color:var(--mute)}
 .ic{flex:none;width:26px;text-align:center;font-size:19px;line-height:1}
 .item.subitem .ic{font-size:17px}
-.item:disabled{cursor:default;color:var(--ink);opacity:1}
-.lk{background:none;border:none;color:var(--main);font:inherit;font-size:15px;font-weight:600;text-decoration:underline;cursor:pointer;padding:0;margin:-4px 0 8px}
+.item:disabled{cursor:default;color:#aaa298;opacity:1}
+.lk{background:none;border:none;color:var(--main);font:inherit;font-size:15px;font-weight:400;text-decoration:underline;cursor:pointer;padding:8px 0;margin:0;display:block}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:10px}
+.foot .msg{margin:0;min-height:0}
 .mhead{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
 .nav{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:transparent;color:var(--ink);font-size:22px;cursor:pointer}
 .nav:disabled{opacity:.3;cursor:default}
@@ -81,6 +83,19 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 .sethead{display:flex;align-items:center;gap:12px;margin-bottom:16px}
 .sethead h2{font-size:26px;color:var(--main)}
 .btn.danger{border-color:#c0392b;color:#c0392b;width:100%;margin-top:4px}
+/* lighter, calmer list */
+.item{border:none;border-bottom:1px solid var(--line);border-radius:0;margin-top:0;padding:11px 4px;gap:12px;background:transparent}
+.item .box{width:22px;height:22px;border:1.5px solid #d9d2c7;font-size:13px}
+.item.on{background:transparent;border-color:var(--line);color:#aaa298}
+.item.on .box{background:var(--done);border-color:var(--done)}
+.ic{width:24px;font-size:18px;opacity:.8}
+.item.on .ic{opacity:.3}
+.item.subitem{margin-left:26px;width:calc(100% - 26px);padding:9px 4px;margin-top:0;font-size:15.5px}
+.item.subitem .box{width:20px;height:20px;font-size:12px}
+.grp{font-size:14px;margin-top:14px}
+.card{border-color:transparent;box-shadow:0 1px 2px rgba(60,40,20,.04),0 6px 18px rgba(60,40,20,.05)}
+.day{border-color:transparent;box-shadow:0 1px 2px rgba(60,40,20,.05)}
+.day.sel{box-shadow:0 4px 10px rgba(204,80,8,.25)}
 </style>
 </head>
 <body>
@@ -92,9 +107,8 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 <section class="card">
 <h2 id="dayTitle">Today</h2>
 <div class="sub">Tap a practice when you finish it. Ticked ones are locked.</div>
-<button class="lk" id="lk"></button>
 <div id="list"></div>
-<div class="msg" id="msg"></div>
+<div class="foot"><div class="msg" id="msg"></div><button class="lk" id="lk"></button></div>
 </section>
 
 <section class="card">
@@ -200,7 +214,7 @@ function render(){
     }else mk(p.name,!!day[p.id],[p.id],"",p.icon);
   });
   const c=count(sel);
-  document.getElementById("msg").textContent=c===P.length?"All practices done. Well done!":c>0?c+" of "+P.length+" done":"";
+  document.getElementById("msg").textContent=c===P.length?"All done. Well done!":c+" of "+P.length+" done";
   stats();cal();
 }
 
