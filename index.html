@@ -125,6 +125,13 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 </section>
 
 <section class="card">
+<h2>Share</h2>
+<div class="sub">Send this app to friends and family. Each person keeps their own records.</div>
+<button class="btn" id="sh">Share this app</button>
+<div class="msg" id="shm"></div>
+</section>
+
+<section class="card">
 <h2>Backup</h2>
 <div class="sub">Keep a copy so you never lose your history. Copy it, save it in Notes or WhatsApp, and paste it back here to restore.</div>
 <div class="btns"><button class="btn" id="bk">Show my backup</button><button class="btn" id="rs">Restore from text</button></div>
@@ -252,6 +259,14 @@ document.getElementById("rs").onclick=()=>{
 };
 const home=document.getElementById("home"),setv=document.getElementById("settings");
 function openSet(o){home.hidden=o;setv.hidden=!o;if(o)cal();window.scrollTo(0,0)}
+document.getElementById("sh").onclick=async()=>{
+  const url=location.href.split("#")[0],m=document.getElementById("shm");
+  try{
+    if(navigator.share){await navigator.share({title:"Sadhana Tracker",text:"Track your daily sadhana practices with this simple app.",url});return}
+  }catch(e){if(e&&e.name==="AbortError")return}
+  try{await navigator.clipboard.writeText(url);m.textContent="Link copied. Paste it in WhatsApp or any chat."}
+  catch(e){m.textContent="Copy this link and send it: "+url}
+};
 document.getElementById("gear").onclick=()=>openSet(true);
 document.getElementById("back").onclick=()=>openSet(false);
 document.getElementById("lk").onclick=()=>{unlocked=!unlocked;render()};
