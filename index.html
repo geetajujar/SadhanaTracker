@@ -96,6 +96,20 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 .card{border-color:transparent;box-shadow:0 1px 2px rgba(60,40,20,.04),0 6px 18px rgba(60,40,20,.05)}
 .day{border-color:transparent;box-shadow:0 1px 2px rgba(60,40,20,.05)}
 .day.sel{box-shadow:0 4px 10px rgba(204,80,8,.25)}
+.prow{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--line)}
+.prow .ic{opacity:1}
+.prow .pn{flex:1;font-size:16px}
+.prow .pn small{color:var(--mute);font-size:13px}
+.rm{background:none;border:none;color:#c0392b;font:inherit;font-size:14px;cursor:pointer;padding:6px 0 6px 8px}
+.addrow{margin-top:14px}
+input[type=text]{width:100%;padding:11px 12px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink);font:inherit;font-size:16px;margin-top:8px}
+.hint{color:var(--mute);font-size:13px;margin-top:6px}
+.icons{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.ico{width:40px;height:40px;border-radius:12px;border:1.5px solid var(--line);background:transparent;font-size:20px;cursor:pointer}
+.ico.sel{border-color:var(--main);background:var(--goldsoft)}
+.addrow .btn{width:100%}
+.ctop{display:flex;justify-content:space-between;align-items:center}
+.plus{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);color:var(--main);font-size:22px;line-height:1;cursor:pointer;padding:0}
 </style>
 </head>
 <body>
@@ -105,7 +119,7 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 <div class="week" id="week"></div>
 
 <section class="card">
-<h2 id="dayTitle">Today</h2>
+<div class="ctop"><h2 id="dayTitle">Today</h2><button class="plus" id="plus" aria-label="Add or remove practices" title="Add or remove practices">+</button></div>
 <div class="sub">Tap a practice when you finish it. Ticked ones are locked.</div>
 <div id="list"></div>
 <div class="foot"><div class="msg" id="msg"></div><button class="lk" id="lk"></button></div>
@@ -137,6 +151,21 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 <div class="msum" id="msum"></div>
 </section>
 
+<section class="card" id="mypr">
+<h2>My practices</h2>
+<div class="sub">Add the practices you do, or remove the ones you don’t.</div>
+<div id="plist"></div>
+<div class="addrow">
+<input id="pn" type="text" placeholder="New practice name" maxlength="40" autocomplete="off">
+<input id="pg" type="text" list="gl" placeholder="Group (optional)" maxlength="30" autocomplete="off">
+<datalist id="gl"></datalist>
+<div class="hint">Practices with the same group name count as done when any one of them is ticked, like Hatha Yoga.</div>
+<div class="icons" id="icpick"></div>
+<button class="btn" id="padd">Add practice</button>
+</div>
+<div class="msg" id="pm"></div>
+</section>
+
 <section class="card">
 <h2>Share</h2>
 <div class="sub">Send this app to friends and family. Each person keeps their own records.</div>
@@ -155,12 +184,31 @@ textarea{width:100%;margin-top:10px;border:1.5px solid var(--line);border-radius
 <h2>Clear all data</h2>
 <div class="sub">Erases every record on this phone. Make a backup first.</div>
 <button class="btn danger" id="reset">Clear all data</button>
+<input id="cdi" type="text" placeholder="Type DELETE to confirm" hidden autocomplete="off">
+<div class="msg" id="cdm"></div>
 </section>
 </div>
 </div>
 
 <script>
-const P=[{id:"guru",name:"Guru Pooja",icon:"🪔"},{id:"hatha",name:"Hatha Yoga",icon:"🧘",parts:[{id:"surya",name:"Surya Shakti",icon:"☀️"},{id:"yogasana",name:"Yogasana",icon:"🧘"}]},{id:"shakti",name:"Shakti Chalana Kriya",icon:"🔥"},{id:"shambhavi",name:"Shambhavi",icon:"👁️"},{id:"breath",name:"Breath Watching",icon:"🌬️"},{id:"samyama",name:"Samyama",icon:"🕉️"}];
+const PKEY="sadhana-practices-v1";
+const DEFAULT=[{id:"guru",name:"Guru Pooja",icon:"🪔"},{id:"surya",name:"Surya Shakti",icon:"☀️",gicon:"🧘",group:"Hatha Yoga"},{id:"yogasana",name:"Yogasana",icon:"🧘",group:"Hatha Yoga"},{id:"shakti",name:"Shakti Chalana Kriya",icon:"🔥"},{id:"shambhavi",name:"Shambhavi",icon:"👁️"},{id:"breath",name:"Breath Watching",icon:"🌬️"},{id:"samyama",name:"Samyama",icon:"🕉️"}];
+let prac=null;
+try{prac=JSON.parse(localStorage.getItem(PKEY))}catch(e){}
+if(!Array.isArray(prac))prac=DEFAULT.map(x=>({...x}));
+function savePrac(){try{localStorage.setItem(PKEY,JSON.stringify(prac))}catch(e){}}
+let P=[];
+function buildP(){
+  const gi={};P=[];
+  prac.forEach(x=>{
+    if(x.group){
+      if(gi[x.group]===undefined){gi[x.group]=P.length;P.push({id:"g:"+x.group,name:x.group,icon:x.gicon||x.icon,parts:[]})}
+      P[gi[x.group]].parts.push(x);
+    }else P.push(x);
+  });
+  P=P.map(p=>p.parts&&p.parts.length===1?p.parts[0]:p);
+}
+buildP();
 const KEY="sadhana-log-v1";
 let log={};
 try{log=JSON.parse(localStorage.getItem(KEY)||"{}")||{}}catch(e){log={}}
@@ -174,17 +222,18 @@ let unlocked=false;
 let mY=new Date().getFullYear(),mM=new Date().getMonth();
 const isDone=(k,p)=>{const d=log[k]||{};return p.parts?p.parts.some(x=>d[x.id]):!!d[p.id]};
 const count=k=>P.filter(p=>isDone(k,p)).length;
+const allDone=k=>P.length>0&&count(k)===P.length;
 const DN=["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
 
 function render(){
   document.getElementById("dateLabel").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"});
   const wk=document.getElementById("week");wk.innerHTML="";
   for(let i=6;i>=0;i--){
-    const d=ago(i),k=fmt(d),c=count(k);
+    const d=ago(i),k=fmt(d),c=count(k),dn=Math.min(P.length,6),fl=P.length?Math.round(c/P.length*dn):0;
     const b=document.createElement("button");
     b.className="day"+(k===sel?" sel":"");
     b.setAttribute("aria-label",d.toDateString()+", "+c+" of "+P.length+" done");
-    b.innerHTML=DN[d.getDay()]+"<b>"+d.getDate()+"</b><span class='dots'>"+P.map((p,j)=>"<i class='"+(j<c?"on":"")+"'></i>").join("")+"</span>";
+    b.innerHTML=DN[d.getDay()]+"<b>"+d.getDate()+"</b><span class='dots'>"+Array.from({length:dn},(_,j)=>"<i class='"+(j<fl?"on":"")+"'></i>").join("")+"</span>";
     b.onclick=()=>{sel=k;render()};
     wk.appendChild(b);
   }
@@ -214,7 +263,7 @@ function render(){
     }else mk(p.name,!!day[p.id],[p.id],"",p.icon);
   });
   const c=count(sel);
-  document.getElementById("msg").textContent=c===P.length?"All done. Well done!":c+" of "+P.length+" done";
+  document.getElementById("msg").textContent=P.length===0?"Add your practices in Settings":allDone(sel)?"All done. Well done!":c+" of "+P.length+" done";
   stats();cal();
 }
 
@@ -227,9 +276,9 @@ function cal(){
   let full=0,tot=0;
   for(let d=1;d<=n;d++){
     const k=fmt(new Date(mY,mM,d)),c=count(k),fut=k>todayKey;
-    if(c===P.length)full++;
+    if(allDone(k))full++;
     tot+=c;
-    const cls="cd"+(c===P.length?" full":"")+(k===todayKey?" today":"")+(k===sel?" sel":"");
+    const cls="cd"+(allDone(k)?" full":"")+(k===todayKey?" today":"")+(k===sel?" sel":"");
     const st=c>0&&c<P.length?" style='background:color-mix(in srgb,var(--gold) "+Math.round(15+c/P.length*60)+"%,transparent)'":"";
     h+="<button class='"+cls+"'"+st+(fut?" disabled":"")+" data-k='"+k+"' aria-label='"+k+", "+c+" of "+P.length+" done'><b>"+d+"</b><small>"+(fut?"":c)+"</small></button>";
   }
@@ -241,13 +290,13 @@ function cal(){
 function stats(){
   let done=0;const per={};P.forEach(p=>per[p.id]=0);
   for(let i=0;i<30;i++){const k=fmt(ago(i));P.forEach(p=>{if(isDone(k,p)){done++;per[p.id]++}})}
-  const pct=Math.round(done/(P.length*30)*100);
+  const pct=P.length?Math.round(done/(P.length*30)*100):0;
   document.getElementById("pct").textContent=pct+"%";
   document.getElementById("arc").style.strokeDashoffset=251.3*(1-pct/100);
-  let s=0,i=count(todayKey)===P.length?0:1;
-  for(;;i++){if(count(fmt(ago(i)))===P.length)s++;else break}
+  let s=0,i=allDone(todayKey)?0:1;
+  for(;;i++){if(allDone(fmt(ago(i))))s++;else break}
   document.getElementById("streak").textContent=s;
-  document.getElementById("full").textContent=Object.keys(log).filter(k=>count(k)===P.length).length;
+  document.getElementById("full").textContent=Object.keys(log).filter(allDone).length;
   let w=0;for(let j=0;j<7;j++)w+=count(fmt(ago(j)));
   document.getElementById("wk").textContent=w;
   document.getElementById("bars").innerHTML=P.map(p=>"<div class='row'><div class='top'><span>"+p.icon+" "+p.name+"</span><span>"+per[p.id]+"/30 days</span></div><div class='bar'><div style='width:"+Math.round(per[p.id]/30*100)+"%'></div></div></div>").join("");
@@ -257,7 +306,7 @@ document.getElementById("pv").onclick=()=>{mM--;if(mM<0){mM=11;mY--}cal()};
 document.getElementById("nx").onclick=()=>{mM++;if(mM>11){mM=0;mY++}cal()};
 const bt=document.getElementById("bt"),bm=document.getElementById("bm");
 document.getElementById("bk").onclick=()=>{
-  bt.value=JSON.stringify(log);bt.hidden=false;bt.select();
+  bt.value=JSON.stringify({v:2,log:log,practices:prac});bt.hidden=false;bt.select();
   bm.textContent="Copy this text and keep it safe in Notes or WhatsApp.";
   try{navigator.clipboard.writeText(bt.value).then(()=>{bm.textContent="Backup copied. Paste it into Notes or WhatsApp to keep it safe."},()=>{})}catch(e){}
 };
@@ -266,12 +315,54 @@ document.getElementById("rs").onclick=()=>{
   try{
     const d=JSON.parse(bt.value);
     if(!d||typeof d!=="object"||Array.isArray(d))throw 0;
-    if(!confirm("Replace your current records with this backup?"))return;
-    log=d;save();render();bt.hidden=true;bt.value="";bm.textContent="Backup restored.";
+    if(d.v===2&&d.log&&typeof d.log==="object"){
+      log=d.log;
+      if(Array.isArray(d.practices)){prac=d.practices.filter(x=>x&&x.id&&x.name).map(x=>({id:String(x.id),name:String(x.name),icon:String(x.icon||"🙏"),...(x.group?{group:String(x.group)}:{}),...(x.gicon?{gicon:String(x.gicon)}:{})}));savePrac();buildP()}
+    }else log=d;
+    save();render();bt.hidden=true;bt.value="";bm.textContent="Backup restored.";
   }catch(e){bm.textContent="That text isn’t a valid backup. Paste the full text and try again."}
 };
 const home=document.getElementById("home"),setv=document.getElementById("settings");
-function openSet(o){home.hidden=o;setv.hidden=!o;if(o)cal();window.scrollTo(0,0)}
+function openSet(o){home.hidden=o;setv.hidden=!o;if(o){cal();renderPrac()}window.scrollTo(0,0)}
+let pickIc="🙏";
+const ICONS=["🙏","🪔","🧘","☀️","🔥","👁️","🌬️","🕉️","📿","🌿","💧","🌙","🔔","📖","✍️","🎧"];
+function renderPrac(){
+  const pl=document.getElementById("plist");
+  pl.innerHTML="";
+  if(!prac.length){const e=document.createElement("div");e.className="sub";e.textContent="No practices yet. Add your first one below.";pl.appendChild(e)}
+  prac.forEach(x=>{
+    const r=document.createElement("div");r.className="prow";
+    const ic=document.createElement("span");ic.className="ic";ic.textContent=x.icon;
+    const nm=document.createElement("span");nm.className="pn";nm.textContent=x.name;
+    if(x.group){const g=document.createElement("small");g.textContent="  · "+x.group;nm.appendChild(g)}
+    const rm=document.createElement("button");rm.className="rm";rm.textContent="Remove";
+    rm.onclick=()=>{
+      if(!rm.dataset.arm){
+        rm.dataset.arm="1";rm.textContent="Tap again to remove";rm.style.fontWeight="600";
+        setTimeout(()=>{if(rm.isConnected){delete rm.dataset.arm;rm.textContent="Remove";rm.style.fontWeight=""}},4000);
+        return;
+      }
+      prac=prac.filter(y=>y.id!==x.id);savePrac();buildP();render();renderPrac();
+      document.getElementById("pm").textContent="Removed “"+x.name+"”.";
+    };
+    r.appendChild(ic);r.appendChild(nm);r.appendChild(rm);pl.appendChild(r);
+  });
+  const gl=document.getElementById("gl");gl.innerHTML="";
+  [...new Set(prac.filter(x=>x.group).map(x=>x.group))].forEach(g=>{const o=document.createElement("option");o.value=g;gl.appendChild(o)});
+  const ip=document.getElementById("icpick");ip.innerHTML="";
+  ICONS.forEach(e=>{const b=document.createElement("button");b.type="button";b.className="ico"+(e===pickIc?" sel":"");b.textContent=e;b.onclick=()=>{pickIc=e;renderPrac()};ip.appendChild(b)});
+}
+document.getElementById("padd").onclick=()=>{
+  const n=document.getElementById("pn").value.trim(),g=document.getElementById("pg").value.trim(),m=document.getElementById("pm");
+  if(!n){m.textContent="Type a practice name first.";return}
+  if(prac.some(x=>x.name.toLowerCase()===n.toLowerCase())){m.textContent="You already have a practice with this name.";return}
+  const item={id:"p"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),name:n,icon:pickIc};
+  if(g)item.group=g;
+  prac.push(item);savePrac();buildP();render();
+  document.getElementById("pn").value="";document.getElementById("pg").value="";
+  m.textContent="Added “"+n+"”.";
+  renderPrac();
+};
 document.getElementById("sh").onclick=async()=>{
   const url=location.href.split("#")[0],m=document.getElementById("shm");
   try{
@@ -280,11 +371,15 @@ document.getElementById("sh").onclick=async()=>{
   try{await navigator.clipboard.writeText(url);m.textContent="Link copied. Paste it in WhatsApp or any chat."}
   catch(e){m.textContent="Copy this link and send it: "+url}
 };
+document.getElementById("plus").onclick=()=>{openSet(true);document.getElementById("mypr").scrollIntoView()};
 document.getElementById("gear").onclick=()=>openSet(true);
 document.getElementById("back").onclick=()=>openSet(false);
 document.getElementById("lk").onclick=()=>{unlocked=!unlocked;render()};
 document.getElementById("reset").onclick=()=>{
-  if((prompt("This erases all your records. Type DELETE to confirm.")||"").trim()==="DELETE"){log={};save();render()}
+  const i=document.getElementById("cdi"),m=document.getElementById("cdm");
+  if(i.hidden){i.hidden=false;i.value="";i.focus();m.textContent="Type DELETE above, then tap Clear all data again.";return}
+  if(i.value.trim()==="DELETE"){log={};save();render();i.hidden=true;i.value="";m.textContent="All records cleared."}
+  else m.textContent="Type DELETE exactly to confirm."
 };
 render();
 </script>
