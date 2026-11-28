@@ -182,6 +182,8 @@ input[type=datetime-local]{border:none;background:var(--bg);color:var(--ink);fon
 .ap.on{background:var(--main);color:#fff}
 .rsum{margin-top:10px;font-size:14px;color:var(--main);font-weight:600;min-height:1.2em}
 .clr{margin-top:8px;background:#ece8e1;color:#6b625a;border:none;border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
+.nl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.nl .clr{margin:0}
 </style>
 </head>
 <body>
@@ -200,14 +202,12 @@ input[type=datetime-local]{border:none;background:var(--bg);color:var(--ink);fon
 <textarea id="ni" rows="3" maxlength="2000" placeholder="Write a note…"></textarea>
 <button class="rlink" id="rtoggle" type="button">⏰ Remind me</button>
 <div id="rbox" hidden>
-<div class="chips"><button class="chip c1" type="button" data-q="h1">⏳ In 1 hour</button><button class="chip c2" type="button" data-q="t8">🌙 Today 8 PM</button><button class="chip c3" type="button" data-q="m8">🌅 Tomorrow 8 AM</button></div>
 <div class="mc" id="mc"></div>
 <div class="tpick"><span class="tl">🕒 Time</span><select id="rh"></select><span>:</span><select id="rm"></select><span class="ampm"><button type="button" id="ram" class="ap">AM</button><button type="button" id="rpm" class="ap">PM</button></span></div>
 <div class="rsum" id="rsum"></div>
-<button class="clr" type="button" id="rclear">Remove reminder</button>
-<div class="hint">Reminders pop up here when the app is open. For a phone alert at that exact time, save the note, then tap Add to calendar on it.</div>
+<div class="hint" id="rhint" hidden>Reminders pop up here when the app is open. For a phone alert at that exact time, save the note, then tap Add to calendar on it.</div>
 </div>
-<div class="nrow"><span class="msg" id="nm"></span><span class="btns"><button class="btn b-gray" id="ncancel" hidden>Cancel</button><button class="btn b-pri" id="nsave">Save note</button></span></div>
+<div class="nrow"><span class="nl"><button class="clr" type="button" id="rclear" hidden>Remove reminder</button><span class="msg" id="nm"></span></span><span class="btns"><button class="btn b-gray" id="ncancel" hidden>Cancel</button><button class="btn b-pri" id="nsave">Save note</button></span></div>
 </section>
 <div id="nlist"></div>
 </div>
@@ -458,6 +458,7 @@ let rd=null,rhr=8,rmin=0,rpm=0,mv=new Date();
 function getR(){return rd?new Date(rd.y,rd.m,rd.d,(rhr%12)+(rpm?12:0),rmin).getTime():null}
 function mrefresh(){
   const t=getR();
+  document.getElementById("rclear").hidden=!rd;
   document.getElementById("rtoggle").textContent=rd?"⏰ Reminder set":"⏰ Remind me";
   document.getElementById("rsum").textContent=t?"⏰ "+fmtR(t):"Pick a day and a time";
 }
@@ -488,6 +489,13 @@ function drawMini(){
   }
   mc.appendChild(g);
 }
+function showHint(){
+  let seen=false;try{seen=localStorage.getItem("sadhana-rhint")==="1"}catch(e){}
+  if(seen)return;
+  const h=document.getElementById("rhint");h.hidden=false;
+  try{localStorage.setItem("sadhana-rhint","1")}catch(e){}
+  setTimeout(()=>{h.hidden=true},9000);
+}
 function setR(ts){
   const box=document.getElementById("rbox");
   if(!ts){rd=null;box.hidden=true;mv=new Date();rhr=8;rmin=0;rpm=0}
@@ -508,15 +516,8 @@ rh.onchange=()=>{rhr=+rh.value;tchg()};
 rmn.onchange=()=>{rmin=+rmn.value;tchg()};
 document.getElementById("ram").onclick=()=>{rpm=0;tchg()};
 document.getElementById("rpm").onclick=()=>{rpm=1;tchg()};
-document.getElementById("rtoggle").onclick=()=>{const b=document.getElementById("rbox");b.hidden=!b.hidden;if(!b.hidden){drawMini();syncTime();mrefresh()}};
+document.getElementById("rtoggle").onclick=()=>{const b=document.getElementById("rbox");b.hidden=!b.hidden;if(!b.hidden){drawMini();syncTime();mrefresh();showHint()}};
 document.getElementById("rclear").onclick=()=>setR(null);
-document.querySelectorAll(".chip[data-q]").forEach(b=>b.onclick=()=>{
-  const q=b.dataset.q,d=new Date();
-  if(q==="h1"){d.setTime(Date.now()+3600000);d.setMinutes(Math.ceil(d.getMinutes()/5)*5,0,0)}
-  else if(q==="t8"){d.setHours(20,0,0,0);if(d.getTime()<=Date.now())d.setDate(d.getDate()+1)}
-  else{d.setDate(d.getDate()+1);d.setHours(8,0,0,0)}
-  setR(d.getTime());
-});
 setR(null);
 function renderDue(){
   const dl=notes.filter(n=>n.r&&!n.rd&&n.r<=Date.now()).sort((a,b)=>a.r-b.r);
