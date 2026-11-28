@@ -110,12 +110,110 @@ input[type=text]{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
 .addrow .btn{width:100%}
 .ctop{display:flex;justify-content:space-between;align-items:center}
 .plus{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--line);background:var(--bg);color:var(--main);font-size:22px;line-height:1;cursor:pointer;padding:0}
+/* smaller, softer buttons */
+.btn{flex:none;width:auto;padding:7px 16px;border-radius:999px;border:none;background:var(--goldsoft);color:var(--main);font-size:14px;font-weight:500}
+.btns{gap:8px}
+.addrow .btn{width:auto;margin-top:2px}
+.btn.danger{width:auto;margin-top:10px;background:#fbe9e6;color:#b8392b}
+.nav{width:34px;height:34px;border-radius:50%;font-size:20px;border-color:transparent;background:var(--bg)}
+.gear{width:38px;height:38px;border-radius:50%;font-size:20px;border-color:transparent;box-shadow:0 1px 3px rgba(60,40,20,.1)}
+.plus{width:30px;height:30px;font-size:19px;border-color:transparent}
+.ico{width:34px;height:34px;border-radius:50%;font-size:17px;border-color:transparent;background:var(--bg)}
+.ico.sel{border-color:var(--main);background:var(--goldsoft)}
+input[type=text]{padding:9px 12px;font-size:15px;border-radius:10px;border-color:transparent}
+.lk{font-size:14px}
+.hl{display:flex;align-items:center;gap:10px}
+.lh{display:block;margin:10px 0 22px}
+.tile{display:flex;align-items:center;gap:14px;width:100%;padding:16px;margin-bottom:12px;border:none;border-radius:18px;background:var(--card);color:var(--ink);font:inherit;text-align:left;cursor:pointer;box-shadow:0 1px 2px rgba(60,40,20,.04),0 6px 18px rgba(60,40,20,.06)}
+.tic{flex:none;width:48px;height:48px;border-radius:14px;background:var(--goldsoft);display:grid;place-items:center;font-size:24px}
+.tt{flex:1}
+.tt b{display:block;font-family:"Fraunces",Georgia,serif;font-size:19px;font-weight:600}
+.tt small{color:var(--mute);font-size:14px}
+.chev{color:var(--mute);font-size:26px}
+#ni{font:inherit;font-size:16px;margin-top:0;border-color:transparent;background:var(--bg);resize:vertical}
+.nrow{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:10px}
+.nrow .msg{margin:0;min-height:0;font-size:14px}
+.ngrp{margin:18px 4px 8px;color:var(--mute);font-size:14px;font-weight:600}
+.note{background:var(--card);border-radius:14px;padding:12px 14px;margin-bottom:8px;box-shadow:0 1px 2px rgba(60,40,20,.04),0 4px 12px rgba(60,40,20,.04)}
+.ntxt{white-space:pre-wrap;overflow-wrap:anywhere;font-size:16px}
+.nmeta{display:flex;justify-content:space-between;align-items:center;margin-top:8px;color:var(--mute);font-size:13px}
+.nmeta button{background:none;border:none;color:var(--mute);font:inherit;font-size:13px;cursor:pointer;padding:2px 0 2px 12px}
+.rlink{background:none;border:none;color:var(--main);font:inherit;font-size:14px;padding:8px 0 0;cursor:pointer}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:var(--goldsoft);color:var(--main);border:none;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer}
+.rpick{display:flex;align-items:center;gap:8px;margin-top:8px}
+input[type=datetime-local]{border:none;background:var(--bg);color:var(--ink);font:inherit;font-size:15px;padding:8px 10px;border-radius:10px;max-width:100%}
+.rtag{color:var(--main);font-size:13px;margin-top:6px}
+.due{background:var(--goldsoft);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.due .rtag{margin:0 0 4px;font-weight:600}
+.due .nmeta button{color:var(--main)}
+.due .nmeta{justify-content:flex-end}
+/* button colours so each kind looks different */
+.btn.b-pri{background:var(--main);color:#fff}
+.btn.b-gray{background:#ece8e1;color:#6b625a}
+.btn.b-green{background:#e0f2e4;color:#2f7a45}
+.btn.b-blue{background:#e3ecfa;color:#3a5ea8}
+.btn.b-purple{background:#eee5f8;color:#6b479e}
+.nmeta .mb{background:none;border:none;border-radius:999px;padding:3px 10px;margin-left:4px;font:inherit;font-size:13px;color:var(--mute);cursor:pointer}
+.nmeta .mb.pur{background:#eee5f8;color:#6b479e}
+.nmeta .mb.blu{background:#e3ecfa;color:#3a5ea8}
+.nmeta .mb.grn{background:#e0f2e4;color:#2f7a45}
+.nmeta .mb.del{color:#c0392b}
+.due .nmeta button{color:inherit}
+/* cute reminder picker */
+.chip{border-radius:14px;padding:8px 12px;font-size:13px;box-shadow:0 1px 3px rgba(60,40,20,.08)}
+.chip.c1{background:#e3ecfa;color:#3a5ea8}
+.chip.c2{background:#eee5f8;color:#6b479e}
+.chip.c3{background:#fdeccf;color:#a35a0c}
+.mc{background:var(--bg);border-radius:14px;padding:10px;margin-top:10px}
+.mch{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.mch b{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:15px}
+.mch button{width:28px;height:28px;border:none;border-radius:50%;background:var(--card);color:var(--main);font-size:16px;cursor:pointer;padding:0}
+.mg{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;text-align:center}
+.mg span{font-size:11px;color:var(--mute)}
+.mg button{aspect-ratio:1;border:none;border-radius:50%;background:transparent;color:var(--ink);font:inherit;font-size:13px;cursor:pointer;padding:0}
+.mg button.td{box-shadow:inset 0 0 0 1.5px var(--gold)}
+.mg button.sl{background:var(--main);color:#fff}
+.mg button:disabled{opacity:.3;cursor:default}
+.tpick{display:flex;align-items:center;gap:6px;margin-top:10px;font-size:14px;color:var(--mute)}
+.tpick select{border:none;background:var(--bg);color:var(--ink);font:inherit;font-size:15px;padding:7px 6px;border-radius:10px}
+.ampm{display:flex;background:var(--bg);border-radius:999px;padding:2px;margin-left:4px}
+.ap{border:none;background:transparent;color:var(--mute);font:inherit;font-size:13px;padding:5px 12px;border-radius:999px;cursor:pointer}
+.ap.on{background:var(--main);color:#fff}
+.rsum{margin-top:10px;font-size:14px;color:var(--main);font-weight:600;min-height:1.2em}
+.clr{margin-top:8px;background:#ece8e1;color:#6b625a;border:none;border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
 </style>
 </head>
 <body>
 <div class="wrap">
-<div id="home">
-<header><div><h1>Sadhana</h1><div class="date" id="dateLabel"></div></div><button class="gear" id="gear" aria-label="Settings">⚙</button></header>
+<div id="launch">
+<header class="lh"><div><h1>Namaste 🙏</h1><div class="date" id="ldate"></div></div></header>
+<div id="dueb2"></div>
+<button class="tile" id="t1"><span class="tic">🪔</span><span class="tt"><b>Sadhana Tracker</b><small id="t1s"></small></span><span class="chev">›</span></button>
+<button class="tile" id="t2"><span class="tic">📝</span><span class="tt"><b>Notes</b><small id="t2s"></small></span><span class="chev">›</span></button>
+</div>
+
+<div id="notesv" hidden>
+<header><div class="hl"><button class="nav" id="nback" aria-label="Back to menu">‹</button><div><h1>Notes</h1><div class="date" id="ncount"></div></div></div></header>
+<div id="dueb"></div>
+<section class="card">
+<textarea id="ni" rows="3" maxlength="2000" placeholder="Write a note…"></textarea>
+<button class="rlink" id="rtoggle" type="button">⏰ Remind me</button>
+<div id="rbox" hidden>
+<div class="chips"><button class="chip c1" type="button" data-q="h1">⏳ In 1 hour</button><button class="chip c2" type="button" data-q="t8">🌙 Today 8 PM</button><button class="chip c3" type="button" data-q="m8">🌅 Tomorrow 8 AM</button></div>
+<div class="mc" id="mc"></div>
+<div class="tpick"><span class="tl">🕒 Time</span><select id="rh"></select><span>:</span><select id="rm"></select><span class="ampm"><button type="button" id="ram" class="ap">AM</button><button type="button" id="rpm" class="ap">PM</button></span></div>
+<div class="rsum" id="rsum"></div>
+<button class="clr" type="button" id="rclear">Remove reminder</button>
+<div class="hint">Reminders pop up here when the app is open. For a phone alert at that exact time, save the note, then tap Add to calendar on it.</div>
+</div>
+<div class="nrow"><span class="msg" id="nm"></span><span class="btns"><button class="btn b-gray" id="ncancel" hidden>Cancel</button><button class="btn b-pri" id="nsave">Save note</button></span></div>
+</section>
+<div id="nlist"></div>
+</div>
+
+<div id="home" hidden>
+<header><div class="hl"><button class="nav" id="menu" aria-label="Back to menu">‹</button><div><h1>Sadhana</h1><div class="date" id="dateLabel"></div></div></div><button class="gear" id="gear" aria-label="Settings">⚙</button></header>
 <div class="week" id="week"></div>
 
 <section class="card">
@@ -161,7 +259,7 @@ input[type=text]{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
 <datalist id="gl"></datalist>
 <div class="hint">Practices with the same group name count as done when any one of them is ticked, like Hatha Yoga.</div>
 <div class="icons" id="icpick"></div>
-<button class="btn" id="padd">Add practice</button>
+<button class="btn b-pri" id="padd">Add practice</button>
 </div>
 <div class="msg" id="pm"></div>
 </section>
@@ -169,20 +267,20 @@ input[type=text]{width:100%;padding:11px 12px;border:1.5px solid var(--line);bor
 <section class="card">
 <h2>Share</h2>
 <div class="sub">Send this app to friends and family. Each person keeps their own records.</div>
-<button class="btn" id="sh">Share this app</button>
+<button class="btn b-green" id="sh">Share this app</button>
 <div class="msg" id="shm"></div>
 </section>
 
 <section class="card">
 <h2>Backup</h2>
 <div class="sub">Keep a copy so you never lose your history. Copy it, save it in Notes or WhatsApp, and paste it back here to restore.</div>
-<div class="btns"><button class="btn" id="bk">Show my backup</button><button class="btn" id="rs">Restore from text</button></div>
+<div class="btns"><button class="btn b-blue" id="bk">Show my backup</button><button class="btn b-purple" id="rs">Restore from text</button></div>
 <textarea id="bt" rows="4" hidden spellcheck="false"></textarea>
 <div class="msg" id="bm"></div>
 </section>
 <section class="card">
 <h2>Clear all data</h2>
-<div class="sub">Erases every record on this phone. Make a backup first.</div>
+<div class="sub">Erases your sadhana records on this phone. Your notes and practices are kept. Make a backup first.</div>
 <button class="btn danger" id="reset">Clear all data</button>
 <input id="cdi" type="text" placeholder="Type DELETE to confirm" hidden autocomplete="off">
 <div class="msg" id="cdm"></div>
@@ -304,9 +402,201 @@ function stats(){
 
 document.getElementById("pv").onclick=()=>{mM--;if(mM<0){mM=11;mY--}cal()};
 document.getElementById("nx").onclick=()=>{mM++;if(mM>11){mM=0;mY++}cal()};
+const NKEY="sadhana-notes-v1";
+let notes=[];
+try{notes=JSON.parse(localStorage.getItem(NKEY))}catch(e){}
+if(!Array.isArray(notes))notes=[];
+notes=notes.filter(n=>n&&n.id&&typeof n.text==="string"&&typeof n.t==="number");
+function saveNotes(){try{localStorage.setItem(NKEY,JSON.stringify(notes))}catch(e){}}
+let editId=null;
+function nlabel(k){
+  if(k===todayKey)return "Today";
+  if(k===fmt(ago(1)))return "Yesterday";
+  return new Date(k+"T00:00").toLocaleDateString("en-IN",{weekday:"short",day:"numeric",month:"short",year:"numeric"});
+}
+function mkEl(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e}
+function renderNotes(){
+  const l=document.getElementById("nlist");l.innerHTML="";
+  document.getElementById("ncount").textContent=notes.length?notes.length+(notes.length===1?" note":" notes"):"Nothing yet";
+  if(!notes.length){l.appendChild(mkEl("div","sub","No notes yet. Write your first one above."))}
+  let last="";
+  notes.slice().sort((a,b)=>b.t-a.t).forEach(n=>{
+    const k=fmt(new Date(n.t));
+    if(k!==last){l.appendChild(mkEl("div","ngrp",nlabel(k)));last=k}
+    const c=mkEl("div","note");
+    c.appendChild(mkEl("div","ntxt",n.text));
+    if(n.r)c.appendChild(mkEl("div","rtag","⏰ "+fmtR(n.r)+(n.rd?" · done":"")));
+    const m=mkEl("div","nmeta");
+    m.appendChild(mkEl("span","",new Date(n.t).toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"})+(n.e?" · edited":"")));
+    const acts=mkEl("span");
+    const eb=mkEl("button","mb","Edit");
+    eb.onclick=()=>{
+      editId=n.id;const ni=document.getElementById("ni");ni.value=n.text;setR(n.r||null);ni.focus();
+      document.getElementById("nsave").textContent="Update note";document.getElementById("ncancel").hidden=false;
+      document.getElementById("nm").textContent="";window.scrollTo(0,0);
+    };
+    const db=mkEl("button","mb del","Delete");
+    db.onclick=()=>{
+      if(!db.dataset.arm){
+        db.dataset.arm="1";db.textContent="Tap again to delete";db.style.color="#c0392b";
+        setTimeout(()=>{if(db.isConnected){delete db.dataset.arm;db.textContent="Delete";db.style.color=""}},4000);
+        return;
+      }
+      notes=notes.filter(x=>x.id!==n.id);saveNotes();
+      if(editId===n.id)resetNoteForm();
+      renderNotes();
+    };
+    if(n.r){const cb=mkEl("button","mb pur","Add to calendar");cb.onclick=()=>icsDownload(n);acts.appendChild(cb)}
+    acts.appendChild(eb);acts.appendChild(db);m.appendChild(acts);c.appendChild(m);l.appendChild(c);
+  });
+  renderDue();
+}
+function pad(n){return String(n).padStart(2,"0")}
+function toInput(ts){const d=new Date(ts);return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate())+"T"+pad(d.getHours())+":"+pad(d.getMinutes())}
+function fmtR(ts){return new Date(ts).toLocaleString("en-IN",{weekday:"short",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"})}
+let rd=null,rhr=8,rmin=0,rpm=0,mv=new Date();
+function getR(){return rd?new Date(rd.y,rd.m,rd.d,(rhr%12)+(rpm?12:0),rmin).getTime():null}
+function mrefresh(){
+  const t=getR();
+  document.getElementById("rtoggle").textContent=rd?"⏰ Reminder set":"⏰ Remind me";
+  document.getElementById("rsum").textContent=t?"⏰ "+fmtR(t):"Pick a day and a time";
+}
+function syncTime(){
+  document.getElementById("rh").value=String(rhr);document.getElementById("rm").value=String(rmin);
+  document.getElementById("ram").className="ap"+(rpm?"":" on");document.getElementById("rpm").className="ap"+(rpm?" on":"");
+}
+function drawMini(){
+  const mc=document.getElementById("mc");mc.innerHTML="";
+  const y=mv.getFullYear(),mo=mv.getMonth(),first=new Date(y,mo,1),n=new Date(y,mo+1,0).getDate();
+  const hd=mkEl("div","mch"),pv=mkEl("button","","‹"),nx=mkEl("button","","›");
+  pv.type="button";nx.type="button";
+  pv.onclick=()=>{mv=new Date(y,mo-1,1);drawMini()};
+  nx.onclick=()=>{mv=new Date(y,mo+1,1);drawMini()};
+  hd.appendChild(pv);hd.appendChild(mkEl("b","",first.toLocaleDateString("en-IN",{month:"long",year:"numeric"})));hd.appendChild(nx);mc.appendChild(hd);
+  const g=mkEl("div","mg");
+  ["S","M","T","W","T","F","S"].forEach(x=>g.appendChild(mkEl("span","",x)));
+  for(let i=0;i<first.getDay();i++)g.appendChild(mkEl("span"));
+  const t0=new Date();t0.setHours(0,0,0,0);
+  for(let d=1;d<=n;d++){
+    const dt=new Date(y,mo,d),b=mkEl("button","",String(d));
+    b.type="button";
+    if(dt<t0)b.disabled=true;
+    if(dt.getTime()===t0.getTime())b.className+=" td";
+    if(rd&&rd.y===y&&rd.m===mo&&rd.d===d)b.className+=" sl";
+    b.onclick=()=>{rd={y:y,m:mo,d:d};drawMini();mrefresh()};
+    g.appendChild(b);
+  }
+  mc.appendChild(g);
+}
+function setR(ts){
+  const box=document.getElementById("rbox");
+  if(!ts){rd=null;box.hidden=true;mv=new Date();rhr=8;rmin=0;rpm=0}
+  else{
+    const d=new Date(ts),h=d.getHours();
+    rd={y:d.getFullYear(),m:d.getMonth(),d:d.getDate()};
+    rpm=h>=12?1:0;rhr=h%12||12;rmin=(Math.round(d.getMinutes()/5)*5)%60;
+    mv=new Date(d.getFullYear(),d.getMonth(),1);box.hidden=false;
+  }
+  drawMini();syncTime();mrefresh();
+}
+const rh=document.getElementById("rh"),rmn=document.getElementById("rm");
+for(let i=1;i<=12;i++){const o=document.createElement("option");o.value=String(i);o.textContent=String(i);rh.appendChild(o)}
+for(let i=0;i<60;i+=5){const o=document.createElement("option");o.value=String(i);o.textContent=pad(i);rmn.appendChild(o)}
+function ensureDay(){if(!rd){const t=new Date();rd={y:t.getFullYear(),m:t.getMonth(),d:t.getDate()};mv=new Date(t.getFullYear(),t.getMonth(),1)}}
+function tchg(){ensureDay();syncTime();drawMini();mrefresh()}
+rh.onchange=()=>{rhr=+rh.value;tchg()};
+rmn.onchange=()=>{rmin=+rmn.value;tchg()};
+document.getElementById("ram").onclick=()=>{rpm=0;tchg()};
+document.getElementById("rpm").onclick=()=>{rpm=1;tchg()};
+document.getElementById("rtoggle").onclick=()=>{const b=document.getElementById("rbox");b.hidden=!b.hidden;if(!b.hidden){drawMini();syncTime();mrefresh()}};
+document.getElementById("rclear").onclick=()=>setR(null);
+document.querySelectorAll(".chip[data-q]").forEach(b=>b.onclick=()=>{
+  const q=b.dataset.q,d=new Date();
+  if(q==="h1"){d.setTime(Date.now()+3600000);d.setMinutes(Math.ceil(d.getMinutes()/5)*5,0,0)}
+  else if(q==="t8"){d.setHours(20,0,0,0);if(d.getTime()<=Date.now())d.setDate(d.getDate()+1)}
+  else{d.setDate(d.getDate()+1);d.setHours(8,0,0,0)}
+  setR(d.getTime());
+});
+setR(null);
+function renderDue(){
+  const dl=notes.filter(n=>n.r&&!n.rd&&n.r<=Date.now()).sort((a,b)=>a.r-b.r);
+  ["dueb","dueb2"].forEach(id=>{
+    const box=document.getElementById(id);box.innerHTML="";
+    dl.forEach(n=>{
+      const c=mkEl("div","due");
+      c.appendChild(mkEl("div","rtag","⏰ Reminder · "+fmtR(n.r)));
+      c.appendChild(mkEl("div","ntxt",n.text.length>140?n.text.slice(0,140)+"…":n.text));
+      const m=mkEl("div","nmeta"),a=mkEl("span");
+      const sn=mkEl("button","mb blu","Snooze 1 hour");
+      sn.onclick=()=>{n.r=Date.now()+3600000;delete n.nt;saveNotes();renderNotes();lsub()};
+      const dn=mkEl("button","mb grn","Done");
+      dn.onclick=()=>{n.rd=1;saveNotes();renderNotes();lsub()};
+      a.appendChild(sn);a.appendChild(dn);m.appendChild(a);c.appendChild(m);box.appendChild(c);
+    });
+  });
+}
+function checkDue(){
+  const now=Date.now();let ch=false;
+  notes.forEach(n=>{
+    if(n.r&&!n.rd&&n.r<=now&&!n.nt){
+      n.nt=1;ch=true;
+      try{if("Notification" in window&&Notification.permission==="granted")new Notification("Reminder",{body:n.text.slice(0,120)})}catch(e){}
+    }
+  });
+  if(ch)saveNotes();
+  renderDue();
+}
+setInterval(checkDue,30000);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkDue()});
+function icsEsc(t){return t.replace(/\\/g,"\\\\").replace(/\r?\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;")}
+function icsT(ts){return new Date(ts).toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"")}
+function icsDownload(n){
+  const title=(n.text.split("\n")[0]||"Note").slice(0,60);
+  const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Sadhana//EN","BEGIN:VEVENT","UID:"+n.id+"-"+n.r+"@sadhana","DTSTAMP:"+icsT(Date.now()),"DTSTART:"+icsT(n.r),"DTEND:"+icsT(n.r+900000),"SUMMARY:"+icsEsc("⏰ "+title),"DESCRIPTION:"+icsEsc(n.text),"BEGIN:VALARM","TRIGGER:PT0S","ACTION:DISPLAY","DESCRIPTION:"+icsEsc(title),"END:VALARM","END:VEVENT","END:VCALENDAR"];
+  const blob=new Blob([L.join("\r\n")+"\r\n"],{type:"text/calendar"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="note-reminder.ics";
+  document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),4000);
+}
+function resetNoteForm(){
+  editId=null;document.getElementById("ni").value="";setR(null);
+  document.getElementById("nsave").textContent="Save note";document.getElementById("ncancel").hidden=true;
+}
+document.getElementById("nsave").onclick=()=>{
+  const ni=document.getElementById("ni"),m=document.getElementById("nm"),t=ni.value.trim();
+  if(!t){m.textContent="Write something first.";return}
+  const r=getR();
+  if(r&&(isNaN(r)||r<=Date.now())){m.textContent="Pick a time in the future.";return}
+  if(r&&"Notification" in window&&Notification.permission==="default"){try{Notification.requestPermission()}catch(e){}}
+  if(editId){const n=notes.find(x=>x.id===editId);if(n){n.text=t.slice(0,2000);n.e=1;if(r){if(n.r!==r){n.r=r;delete n.rd;delete n.nt}}else{delete n.r;delete n.rd;delete n.nt}}}
+  else{const n={id:"n"+Date.now().toString(36)+Math.random().toString(36).slice(2,5),t:Date.now(),text:t.slice(0,2000)};if(r)n.r=r;notes.push(n)}
+  saveNotes();resetNoteForm();m.textContent="Saved.";
+  setTimeout(()=>{if(m.textContent==="Saved.")m.textContent=""},1500);
+  renderNotes();
+};
+document.getElementById("ncancel").onclick=()=>{resetNoteForm();document.getElementById("nm").textContent=""};
+function lsub(){
+  renderDue();
+  document.getElementById("ldate").textContent=new Date().toLocaleDateString("en-IN",{weekday:"long",day:"numeric",month:"long"});
+  document.getElementById("t1s").textContent=P.length?"Today: "+count(todayKey)+" of "+P.length+" done":"Set up your practices";
+  document.getElementById("t2s").textContent=notes.length?notes.length+(notes.length===1?" note":" notes"):"Write your first note";
+}
+function go(v){
+  document.getElementById("launch").hidden=v!=="launch";
+  document.getElementById("home").hidden=v!=="tracker";
+  document.getElementById("notesv").hidden=v!=="notes";
+  document.getElementById("settings").hidden=true;
+  if(v==="launch")lsub();
+  if(v==="notes")renderNotes();
+  window.scrollTo(0,0);
+}
+document.getElementById("t1").onclick=()=>go("tracker");
+document.getElementById("t2").onclick=()=>go("notes");
+document.getElementById("menu").onclick=()=>go("launch");
+document.getElementById("nback").onclick=()=>go("launch");
 const bt=document.getElementById("bt"),bm=document.getElementById("bm");
 document.getElementById("bk").onclick=()=>{
-  bt.value=JSON.stringify({v:2,log:log,practices:prac});bt.hidden=false;bt.select();
+  bt.value=JSON.stringify({v:2,log:log,practices:prac,notes:notes});bt.hidden=false;bt.select();
   bm.textContent="Copy this text and keep it safe in Notes or WhatsApp.";
   try{navigator.clipboard.writeText(bt.value).then(()=>{bm.textContent="Backup copied. Paste it into Notes or WhatsApp to keep it safe."},()=>{})}catch(e){}
 };
@@ -317,6 +607,7 @@ document.getElementById("rs").onclick=()=>{
     if(!d||typeof d!=="object"||Array.isArray(d))throw 0;
     if(d.v===2&&d.log&&typeof d.log==="object"){
       log=d.log;
+      if(Array.isArray(d.notes)){notes=d.notes.filter(n=>n&&n.id&&typeof n.text==="string"&&typeof n.t==="number").map(n=>({id:String(n.id),t:n.t,text:n.text.slice(0,2000),...(n.e?{e:1}:{}),...(typeof n.r==="number"?{r:n.r}:{}),...(n.rd?{rd:1}:{})}));saveNotes();renderNotes()}
       if(Array.isArray(d.practices)){prac=d.practices.filter(x=>x&&x.id&&x.name).map(x=>({id:String(x.id),name:String(x.name),icon:String(x.icon||"🙏"),...(x.group?{group:String(x.group)}:{}),...(x.gicon?{gicon:String(x.gicon)}:{})}));savePrac();buildP()}
     }else log=d;
     save();render();bt.hidden=true;bt.value="";bm.textContent="Backup restored.";
@@ -381,6 +672,8 @@ document.getElementById("reset").onclick=()=>{
   if(i.value.trim()==="DELETE"){log={};save();render();i.hidden=true;i.value="";m.textContent="All records cleared."}
   else m.textContent="Type DELETE exactly to confirm."
 };
+lsub();
+checkDue();
 render();
 </script>
 </body>
