@@ -221,6 +221,21 @@ input[type=datetime-local]{border:none;background:var(--bg);color:var(--ink);fon
 .cd{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
 .cd small{display:block;font-size:10px;color:var(--mute)}
 .cd.full small{color:#fff}
+/* motion */
+@keyframes inFwd{from{opacity:0;transform:translateX(28px)}to{opacity:1;transform:none}}
+@keyframes inBack{from{opacity:0;transform:translateX(-28px)}to{opacity:1;transform:none}}
+@keyframes pop{0%{transform:scale(.5)}60%{transform:scale(1.28)}100%{transform:scale(1)}}
+@keyframes toastIn{from{opacity:0;transform:translate(-50%,10px)}to{opacity:1;transform:translate(-50%,0)}}
+.v-fwd{animation:inFwd .3s cubic-bezier(.2,.8,.2,1)}
+.v-back{animation:inBack .3s cubic-bezier(.2,.8,.2,1)}
+.item.pop .box{animation:pop .38s ease}
+button{transition:transform .12s ease,background-color .2s ease}
+button:active:not(:disabled){transform:scale(.95)}
+.tile:active{transform:scale(.98)}
+.nmeta .mb.ic.grn{background:#e0f2e4}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:18px;font-size:14px;max-width:88vw;text-align:center;z-index:50;box-shadow:0 6px 18px rgba(0,0,0,.2)}
+.toast.show{animation:toastIn .25s ease}
+@media (prefers-reduced-motion:reduce){.v-fwd,.v-back,.item.pop .box,.toast.show{animation:none}button{transition:none}}
 </style>
 </head>
 <body>
@@ -325,6 +340,7 @@ input[type=datetime-local]{border:none;background:var(--bg);color:var(--ink);fon
 </div>
 </div>
 
+<div id="toast" class="toast" hidden></div>
 <script>
 const PKEY="sadhana-practices-v1";
 const DEFAULT=[{id:"guru",name:"Guru Pooja",icon:"🪔"},{id:"surya",name:"Surya Shakti",icon:"☀️",gicon:"🧘",group:"Hatha Yoga"},{id:"yogasana",name:"Yogasana",icon:"🧘",group:"Hatha Yoga"},{id:"shakti",name:"Shakti Chalana Kriya",icon:"🔥"},{id:"shambhavi",name:"Shambhavi",icon:"👁️"},{id:"breath",name:"Breath Watching",icon:"🌬️"},{id:"samyama",name:"Samyama",icon:"🕉️"}];
@@ -354,6 +370,7 @@ const ago=n=>{const d=new Date();d.setDate(d.getDate()-n);return d};
 const todayKey=fmt(new Date());
 let sel=todayKey;
 let unlocked=false;
+let lastTick=null;
 let mY=new Date().getFullYear(),mM=new Date().getMonth();
 const isDone=(k,p)=>{const d=log[k]||{};return p.parts?p.parts.some(x=>d[x.id]):!!d[p.id]};
 const count=k=>P.filter(p=>isDone(k,p)).length;
@@ -381,12 +398,13 @@ function render(){
     const all=ids.every(i=>log[sel][i]);
     ids.forEach(i=>{if(all)delete log[sel][i];else log[sel][i]=true});
     if(!Object.keys(log[sel]).length)delete log[sel];
-    save();render();
+    lastTick=all?null:ids[0];save();render();lastTick=null;
   };
   const mk=(name,on,ids,cls,ic)=>{
     const b=document.createElement("button");
     b.className="item"+cls+(on?" on":"");
     b.setAttribute("aria-pressed",on);
+    if(on&&ids.length===1&&ids[0]===lastTick)b.classList.add("pop");
     b.innerHTML="<span class='box'>✓</span><span class='ic'>"+ic+"</span><span>"+name+"</span>";
     if(on&&!unlocked)b.disabled=true;else b.onclick=()=>toggle(ids);
     list.appendChild(b);
@@ -484,6 +502,9 @@ function renderNotes(){
       renderNotes();
     };
     if(n.r){const cb=mkEl("button","mb ic pur","📅");cb.title="Add to calendar";cb.setAttribute("aria-label","Add to calendar");cb.onclick=()=>addToCal(n);acts.appendChild(cb)}
+    if(/Android/.test(navigator.userAgent||"")&&!n.rd&&n.r&&n.r>Date.now()&&n.r-Date.now()<=86400000){
+      const ab=mkEl("button","mb ic grn","⏰");ab.title="Set phone alarm";ab.setAttribute("aria-label","Set phone alarm");ab.onclick=()=>setAlarm(n);acts.appendChild(ab);
+    }
     acts.appendChild(eb);acts.appendChild(db);m.appendChild(acts);c.appendChild(m);l.appendChild(c);
   });
   renderDue();
@@ -596,8 +617,21 @@ function icsDownload(n){
   document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
 }
+let tt=null;
+function toast(m){
+  const t=document.getElementById("toast");t.textContent=m;t.hidden=false;
+  t.classList.remove("show");void t.offsetWidth;t.classList.add("show");
+  clearTimeout(tt);tt=setTimeout(()=>{t.hidden=true},6000);
+}
+function setAlarm(n){
+  const d=new Date(n.r),title=(n.text.split("\n")[0]||"Note").slice(0,40);
+  const u="intent:#Intent;action=android.intent.action.SET_ALARM;i.android.intent.extra.alarm.HOUR="+d.getHours()+";i.android.intent.extra.alarm.MINUTES="+d.getMinutes()+";S.android.intent.extra.alarm.MESSAGE="+encodeURIComponent(title)+";end";
+  toast("Tap Save in the Clock app to set the alarm.");
+  try{window.location.href=u}catch(e){}
+}
 function addToCal(n){
   const ua=navigator.userAgent||"",title=(n.text.split("\n")[0]||"Note").slice(0,60);
+  toast(/iPhone|iPad|iPod/.test(ua)?"Tap Add to save the event.":"Tap Save in Calendar. For an alert at the exact time, set the notification to “At time of event”.");
   if(/iPhone|iPad|iPod/.test(ua)){
     let w=null;
     try{w=window.open("data:text/calendar;charset=utf-8,"+encodeURIComponent(icsText(n)),"_blank")}catch(e){}
@@ -632,7 +666,7 @@ function lsub(){
   document.getElementById("t1s").textContent=P.length?"Today: "+count(todayKey)+" of "+P.length+" done":"Set up your practices";
   document.getElementById("t2s").textContent=notes.length?notes.length+(notes.length===1?" note":" notes"):"Write your first note";
 }
-function showView(v){
+function showView(v,dir){
   document.getElementById("launch").hidden=v!=="launch";
   document.getElementById("home").hidden=v!=="tracker";
   document.getElementById("settings").hidden=v!=="settings";
@@ -640,16 +674,20 @@ function showView(v){
   if(v==="launch")lsub();
   if(v==="notes")renderNotes();
   if(v==="settings"){cal();renderPrac()}
+  if(dir!=="none"){
+    const el=document.getElementById({launch:"launch",tracker:"home",settings:"settings",notes:"notesv"}[v]);
+    el.classList.remove("v-fwd","v-back");void el.offsetWidth;el.classList.add(dir==="back"?"v-back":"v-fwd");
+  }
   window.scrollTo(0,0);
 }
 let depth=0,curView="launch";
 function go(v,fromPop){
   if(!fromPop){
-    if(v===curView){showView(v);return}
+    if(v===curView){showView(v,"none");return}
     depth++;
     try{history.pushState({v:v,d:depth},"")}catch(e){depth--}
   }
-  curView=v;showView(v);
+  curView=v;showView(v,fromPop?"back":"fwd");
 }
 function back(parent){
   if(depth>0){try{history.back();return}catch(e){}}
@@ -657,7 +695,7 @@ function back(parent){
 }
 window.addEventListener("popstate",e=>{
   const st=e.state||{v:"launch",d:0};
-  depth=st.d||0;curView=st.v||"launch";showView(curView);
+  const old=depth;depth=st.d||0;curView=st.v||"launch";showView(curView,depth<old?"back":"fwd");
 });
 try{history.replaceState({v:"launch",d:0},"")}catch(e){}
 document.getElementById("t1").onclick=()=>go("tracker");
