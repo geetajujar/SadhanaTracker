@@ -199,6 +199,28 @@ input[type=datetime-local]{border:none;background:var(--bg);color:var(--ink);fon
 .ehead{gap:10px;justify-content:space-between}
 .rtop{justify-content:flex-start}
 .rtime{margin-left:0;display:flex;align-items:center;gap:6px}
+/* note icon buttons */
+.nmeta .mb.ic{width:32px;height:32px;padding:0;margin-left:6px;border-radius:50%;font-size:15px;line-height:1;display:inline-grid;place-items:center}
+.nmeta .mb.ic.pur{background:#eee5f8}
+.nmeta .mb.ic.blu{background:#e3ecfa}
+.nmeta .mb.ic.red{background:#fbe9e6}
+.nmeta .mb.ic.arm{width:auto;padding:0 12px;border-radius:999px;font-size:12px;color:#c0392b}
+.nmeta>span:last-child{display:flex;align-items:center}
+/* tracker calendar, same style as the reminder calendar */
+.mc .mhead{margin-bottom:6px}
+.mc .mhead b{font-family:"Fraunces",Georgia,serif;font-weight:600;font-size:15px}
+.mc .mhead .nav{width:28px;height:28px;font-size:16px;background:var(--card);border:none;padding:0}
+.cal{gap:3px}
+.wd{font-size:11px}
+.cd{border:none;border-radius:50%;background:transparent;font-size:13px;padding:0;display:grid;place-items:center}
+.cd b{font-weight:400}
+.cd small{display:none}
+.cd.full{background:var(--done);color:#fff}
+.cd.today{border:none;box-shadow:inset 0 0 0 1.5px var(--gold)}
+.cd.sel{outline:none;box-shadow:inset 0 0 0 2px var(--main)}
+.cd{display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.1}
+.cd small{display:block;font-size:10px;color:var(--mute)}
+.cd.full small{color:#fff}
 </style>
 </head>
 <body>
@@ -258,9 +280,9 @@ input[type=datetime-local]{border:none;background:var(--bg);color:var(--ink);fon
 <div class="sethead"><button class="nav" id="back" aria-label="Back">‹</button><h2>Settings</h2></div>
 <section class="card">
 <h2>Calendar</h2>
-<div class="mhead"><button class="nav" id="pv" aria-label="Previous month">‹</button><h2 id="monTitle"></h2><button class="nav" id="nx" aria-label="Next month">›</button></div>
 <div class="sub">Tap any day to see or edit it. Green means all done.</div>
-<div class="cal" id="cal"></div>
+<div class="mc"><div class="mhead"><button class="nav" id="pv" aria-label="Previous month">‹</button><b id="monTitle"></b><button class="nav" id="nx" aria-label="Next month">›</button></div>
+<div class="cal" id="cal"></div></div>
 <div class="msum" id="msum"></div>
 </section>
 
@@ -393,7 +415,7 @@ function cal(){
     tot+=c;
     const cls="cd"+(allDone(k)?" full":"")+(k===todayKey?" today":"")+(k===sel?" sel":"");
     const st=c>0&&c<P.length?" style='background:color-mix(in srgb,var(--gold) "+Math.round(15+c/P.length*60)+"%,transparent)'":"";
-    h+="<button class='"+cls+"'"+st+(fut?" disabled":"")+" data-k='"+k+"' aria-label='"+k+", "+c+" of "+P.length+" done'><b>"+d+"</b><small>"+(fut?"":c)+"</small></button>";
+    h+="<button class='"+cls+"'"+st+(fut?" disabled":"")+" data-k='"+k+"' aria-label='"+k+", "+c+" of "+P.length+" done'><b>"+d+"</b><small>"+(fut||!c?"":c)+"</small></button>";
   }
   const g=document.getElementById("cal");g.innerHTML=h;
   g.querySelectorAll("button").forEach(b=>b.onclick=()=>{sel=b.dataset.k;openSet(false);render()});
@@ -444,24 +466,24 @@ function renderNotes(){
     const m=mkEl("div","nmeta");
     m.appendChild(mkEl("span","",new Date(n.t).toLocaleTimeString("en-IN",{hour:"numeric",minute:"2-digit"})+(n.e?" · edited":"")));
     const acts=mkEl("span");
-    const eb=mkEl("button","mb","Edit");
+    const eb=mkEl("button","mb ic blu","✏️");eb.title="Edit";eb.setAttribute("aria-label","Edit");
     eb.onclick=()=>{
       editId=n.id;const ni=document.getElementById("ni");ni.value=n.text;setR(n.r||null);ni.focus();
       document.getElementById("nsave").textContent="Update note";document.getElementById("ehead").hidden=false;
       document.getElementById("nm").textContent="";window.scrollTo(0,0);
     };
-    const db=mkEl("button","mb del","Delete");
+    const db=mkEl("button","mb ic red","🗑️");db.title="Delete";db.setAttribute("aria-label","Delete");
     db.onclick=()=>{
       if(!db.dataset.arm){
-        db.dataset.arm="1";db.textContent="Tap again to delete";db.style.color="#c0392b";
-        setTimeout(()=>{if(db.isConnected){delete db.dataset.arm;db.textContent="Delete";db.style.color=""}},4000);
+        db.dataset.arm="1";db.textContent="Sure?";db.classList.add("arm");
+        setTimeout(()=>{if(db.isConnected){delete db.dataset.arm;db.textContent="🗑️";db.classList.remove("arm")}},4000);
         return;
       }
       notes=notes.filter(x=>x.id!==n.id);saveNotes();
       if(editId===n.id)resetNoteForm();
       renderNotes();
     };
-    if(n.r){const cb=mkEl("button","mb pur","Add to calendar");cb.onclick=()=>addToCal(n);acts.appendChild(cb)}
+    if(n.r){const cb=mkEl("button","mb ic pur","📅");cb.title="Add to calendar";cb.setAttribute("aria-label","Add to calendar");cb.onclick=()=>addToCal(n);acts.appendChild(cb)}
     acts.appendChild(eb);acts.appendChild(db);m.appendChild(acts);c.appendChild(m);l.appendChild(c);
   });
   renderDue();
@@ -610,19 +632,38 @@ function lsub(){
   document.getElementById("t1s").textContent=P.length?"Today: "+count(todayKey)+" of "+P.length+" done":"Set up your practices";
   document.getElementById("t2s").textContent=notes.length?notes.length+(notes.length===1?" note":" notes"):"Write your first note";
 }
-function go(v){
+function showView(v){
   document.getElementById("launch").hidden=v!=="launch";
   document.getElementById("home").hidden=v!=="tracker";
+  document.getElementById("settings").hidden=v!=="settings";
   document.getElementById("notesv").hidden=v!=="notes";
-  document.getElementById("settings").hidden=true;
   if(v==="launch")lsub();
   if(v==="notes")renderNotes();
+  if(v==="settings"){cal();renderPrac()}
   window.scrollTo(0,0);
 }
+let depth=0,curView="launch";
+function go(v,fromPop){
+  if(!fromPop){
+    if(v===curView){showView(v);return}
+    depth++;
+    try{history.pushState({v:v,d:depth},"")}catch(e){depth--}
+  }
+  curView=v;showView(v);
+}
+function back(parent){
+  if(depth>0){try{history.back();return}catch(e){}}
+  go(parent,true);
+}
+window.addEventListener("popstate",e=>{
+  const st=e.state||{v:"launch",d:0};
+  depth=st.d||0;curView=st.v||"launch";showView(curView);
+});
+try{history.replaceState({v:"launch",d:0},"")}catch(e){}
 document.getElementById("t1").onclick=()=>go("tracker");
 document.getElementById("t2").onclick=()=>go("notes");
-document.getElementById("menu").onclick=()=>go("launch");
-document.getElementById("nback").onclick=()=>go("launch");
+document.getElementById("menu").onclick=()=>back("launch");
+document.getElementById("nback").onclick=()=>back("launch");
 const bt=document.getElementById("bt"),bm=document.getElementById("bm");
 document.getElementById("bk").onclick=()=>{
   bt.value=JSON.stringify({v:2,log:log,practices:prac,notes:notes});bt.hidden=false;bt.select();
@@ -643,7 +684,7 @@ document.getElementById("rs").onclick=()=>{
   }catch(e){bm.textContent="That text isn’t a valid backup. Paste the full text and try again."}
 };
 const home=document.getElementById("home"),setv=document.getElementById("settings");
-function openSet(o){home.hidden=o;setv.hidden=!o;if(o){cal();renderPrac()}window.scrollTo(0,0)}
+function openSet(o){if(o)go("settings");else back("tracker")}
 let pickIc="🙏";
 const ICONS=["🙏","🪔","🧘","☀️","🔥","👁️","🌬️","🕉️","📿","🌿","💧","🌙","🔔","📖","✍️","🎧"];
 function renderPrac(){
