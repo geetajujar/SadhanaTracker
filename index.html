@@ -184,6 +184,21 @@ input[type=datetime-local]{border:none;background:var(--bg);color:var(--ink);fon
 .clr{margin-top:8px;background:#ece8e1;color:#6b625a;border:none;border-radius:999px;padding:6px 14px;font:inherit;font-size:13px;cursor:pointer}
 .nl{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .nl .clr{margin:0}
+.nrow .rlink{padding:6px 0}
+#nm{margin:6px 0 0;min-height:0;font-size:14px}
+#nm:empty{display:none}
+.rrow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:10px}
+.rrow .rsum{margin-top:0}
+.rrow .clr{margin:0;flex:none}
+.rtop{display:flex;align-items:center;gap:6px;margin-top:12px;color:var(--mute)}
+.rtop .x{margin-left:auto;width:28px;height:28px;border:none;border-radius:50%;background:#ece8e1;color:#6b625a;font-size:13px;cursor:pointer;padding:0}
+.ehead{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;color:var(--mute);font-size:14px}
+.elk{background:none;border:none;color:var(--mute);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer;padding:0}
+.rsum{text-align:center;margin-top:10px}
+.xb{flex:none;width:28px;height:28px;border:none;border-radius:50%;background:#ece8e1;color:#6b625a;font-size:13px;line-height:1;cursor:pointer;padding:0}
+.ehead{gap:10px;justify-content:space-between}
+.rtop{justify-content:flex-start}
+.rtime{margin-left:0;display:flex;align-items:center;gap:6px}
 </style>
 </head>
 <body>
@@ -199,15 +214,15 @@ input[type=datetime-local]{border:none;background:var(--bg);color:var(--ink);fon
 <header><div class="hl"><button class="nav" id="nback" aria-label="Back to menu">‹</button><div><h1>Notes</h1><div class="date" id="ncount"></div></div></div></header>
 <div id="dueb"></div>
 <section class="card">
+<div class="ehead" id="ehead" hidden><span>🌸 Editing note</span><button class="xb" type="button" id="ncancel" aria-label="Cancel editing" title="Cancel editing">✕</button></div>
 <textarea id="ni" rows="3" maxlength="2000" placeholder="Write a note…"></textarea>
-<button class="rlink" id="rtoggle" type="button">⏰ Remind me</button>
 <div id="rbox" hidden>
+<div class="rtop"><span class="rtime"><span class="tl">🕒</span><select id="rh"></select><span>:</span><select id="rm"></select><span class="ampm"><button type="button" id="ram" class="ap">AM</button><button type="button" id="rpm" class="ap">PM</button></span></span></div>
 <div class="mc" id="mc"></div>
-<div class="tpick"><span class="tl">🕒 Time</span><select id="rh"></select><span>:</span><select id="rm"></select><span class="ampm"><button type="button" id="ram" class="ap">AM</button><button type="button" id="rpm" class="ap">PM</button></span></div>
-<div class="rsum" id="rsum"></div>
-<div class="hint" id="rhint" hidden>Reminders pop up here when the app is open. For a phone alert at that exact time, save the note, then tap Add to calendar on it.</div>
+<div class="hint" id="rhint" hidden>Pick a day and a time. Tap the chosen day again to remove the reminder. For a phone alert at that exact time, save the note, then tap Add to calendar on it.</div>
 </div>
-<div class="nrow"><span class="nl"><button class="clr" type="button" id="rclear" hidden>Remove reminder</button><span class="msg" id="nm"></span></span><span class="btns"><button class="btn b-gray" id="ncancel" hidden>Cancel</button><button class="btn b-pri" id="nsave">Save note</button></span></div>
+<div class="nrow"><button class="rlink" id="rtoggle" type="button">⏰ Remind me</button><button class="btn b-pri" id="nsave">Save note</button></div>
+<div class="msg" id="nm"></div>
 </section>
 <div id="nlist"></div>
 </div>
@@ -432,7 +447,7 @@ function renderNotes(){
     const eb=mkEl("button","mb","Edit");
     eb.onclick=()=>{
       editId=n.id;const ni=document.getElementById("ni");ni.value=n.text;setR(n.r||null);ni.focus();
-      document.getElementById("nsave").textContent="Update note";document.getElementById("ncancel").hidden=false;
+      document.getElementById("nsave").textContent="Update note";document.getElementById("ehead").hidden=false;
       document.getElementById("nm").textContent="";window.scrollTo(0,0);
     };
     const db=mkEl("button","mb del","Delete");
@@ -446,7 +461,7 @@ function renderNotes(){
       if(editId===n.id)resetNoteForm();
       renderNotes();
     };
-    if(n.r){const cb=mkEl("button","mb pur","Add to calendar");cb.onclick=()=>icsDownload(n);acts.appendChild(cb)}
+    if(n.r){const cb=mkEl("button","mb pur","Add to calendar");cb.onclick=()=>addToCal(n);acts.appendChild(cb)}
     acts.appendChild(eb);acts.appendChild(db);m.appendChild(acts);c.appendChild(m);l.appendChild(c);
   });
   renderDue();
@@ -458,9 +473,7 @@ let rd=null,rhr=8,rmin=0,rpm=0,mv=new Date();
 function getR(){return rd?new Date(rd.y,rd.m,rd.d,(rhr%12)+(rpm?12:0),rmin).getTime():null}
 function mrefresh(){
   const t=getR();
-  document.getElementById("rclear").hidden=!rd;
-  document.getElementById("rtoggle").textContent=rd?"⏰ Reminder set":"⏰ Remind me";
-  document.getElementById("rsum").textContent=t?"⏰ "+fmtR(t):"Pick a day and a time";
+  document.getElementById("rtoggle").textContent=t?"⏰ "+fmtR(t):"⏰ Remind me";
 }
 function syncTime(){
   document.getElementById("rh").value=String(rhr);document.getElementById("rm").value=String(rmin);
@@ -484,7 +497,7 @@ function drawMini(){
     if(dt<t0)b.disabled=true;
     if(dt.getTime()===t0.getTime())b.className+=" td";
     if(rd&&rd.y===y&&rd.m===mo&&rd.d===d)b.className+=" sl";
-    b.onclick=()=>{rd={y:y,m:mo,d:d};drawMini();mrefresh()};
+    b.onclick=()=>{if(rd&&rd.y===y&&rd.m===mo&&rd.d===d)rd=null;else rd={y:y,m:mo,d:d};drawMini();mrefresh()};
     g.appendChild(b);
   }
   mc.appendChild(g);
@@ -517,7 +530,6 @@ rmn.onchange=()=>{rmin=+rmn.value;tchg()};
 document.getElementById("ram").onclick=()=>{rpm=0;tchg()};
 document.getElementById("rpm").onclick=()=>{rpm=1;tchg()};
 document.getElementById("rtoggle").onclick=()=>{const b=document.getElementById("rbox");b.hidden=!b.hidden;if(!b.hidden){drawMini();syncTime();mrefresh();showHint()}};
-document.getElementById("rclear").onclick=()=>setR(null);
 setR(null);
 function renderDue(){
   const dl=notes.filter(n=>n.r&&!n.rd&&n.r<=Date.now()).sort((a,b)=>a.r-b.r);
@@ -551,17 +563,33 @@ setInterval(checkDue,30000);
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)checkDue()});
 function icsEsc(t){return t.replace(/\\/g,"\\\\").replace(/\r?\n/g,"\\n").replace(/,/g,"\\,").replace(/;/g,"\\;")}
 function icsT(ts){return new Date(ts).toISOString().replace(/[-:]/g,"").replace(/\.\d{3}/,"")}
-function icsDownload(n){
+function icsText(n){
   const title=(n.text.split("\n")[0]||"Note").slice(0,60);
   const L=["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//Sadhana//EN","BEGIN:VEVENT","UID:"+n.id+"-"+n.r+"@sadhana","DTSTAMP:"+icsT(Date.now()),"DTSTART:"+icsT(n.r),"DTEND:"+icsT(n.r+900000),"SUMMARY:"+icsEsc("⏰ "+title),"DESCRIPTION:"+icsEsc(n.text),"BEGIN:VALARM","TRIGGER:PT0S","ACTION:DISPLAY","DESCRIPTION:"+icsEsc(title),"END:VALARM","END:VEVENT","END:VCALENDAR"];
-  const blob=new Blob([L.join("\r\n")+"\r\n"],{type:"text/calendar"});
+  return L.join("\r\n")+"\r\n";
+}
+function icsDownload(n){
+  const blob=new Blob([icsText(n)],{type:"text/calendar"});
   const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="note-reminder.ics";
   document.body.appendChild(a);a.click();a.remove();
   setTimeout(()=>URL.revokeObjectURL(a.href),4000);
 }
+function addToCal(n){
+  const ua=navigator.userAgent||"",title=(n.text.split("\n")[0]||"Note").slice(0,60);
+  if(/iPhone|iPad|iPod/.test(ua)){
+    let w=null;
+    try{w=window.open("data:text/calendar;charset=utf-8,"+encodeURIComponent(icsText(n)),"_blank")}catch(e){}
+    if(!w)icsDownload(n);
+    return;
+  }
+  const url="https://calendar.google.com/calendar/render?action=TEMPLATE&text="+encodeURIComponent("⏰ "+title)+"&dates="+icsT(n.r)+"/"+icsT(n.r+900000)+"&details="+encodeURIComponent(n.text.slice(0,1000));
+  let w=null;
+  try{w=window.open(url,"_blank")}catch(e){}
+  if(!w)icsDownload(n);
+}
 function resetNoteForm(){
   editId=null;document.getElementById("ni").value="";setR(null);
-  document.getElementById("nsave").textContent="Save note";document.getElementById("ncancel").hidden=true;
+  document.getElementById("nsave").textContent="Save note";document.getElementById("ehead").hidden=true;
 }
 document.getElementById("nsave").onclick=()=>{
   const ni=document.getElementById("ni"),m=document.getElementById("nm"),t=ni.value.trim();
